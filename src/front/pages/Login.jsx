@@ -111,7 +111,8 @@ export const Login = () => {
 
                             <div className="text-center mt-3">
                                 <small className="text-muted">¿Olvidaste tu contraseña?</small>{" "}
-                                <Link to="/recover">Recuperar</Link>
+                                {/* cambio el Link para que me vaya a Profile */}
+                                <Link to="/Profile">Recuperar</Link>
                             </div>
 
                             <hr className="my-4" />
