@@ -15,7 +15,7 @@ export const Footer = () => {
 					</div>
 
 					{/* Enlaces */}
-					<div className="col-md-4">
+					{/* <div className="col-md-4">
 						<ul className="nav justify-content-center">
 							<li className="nav-item">
 								<Link to="/about" className="nav-link px-2 text-muted">Acerca</Link>
@@ -30,7 +30,7 @@ export const Footer = () => {
 								<Link to="/register" className="nav-link px-2 text-muted">Registro</Link>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 
 					{/* Redes */}
 					<div className="col-md-4 text-center text-md-end">

@@ -8,7 +8,7 @@ export const Navbar = () => {
 
 				{/* Brand */}
 				<Link to="/" className="navbar-brand mb-0 h1">
-					React Boilerplate
+					[LOGO] Weplaceit
 				</Link>
 
 				{/* Toggler (móvil) */}
@@ -27,21 +27,27 @@ export const Navbar = () => {
 				{/* Links */}
 				<div className="collapse navbar-collapse" id="navbarContent">
 					<ul className="navbar-nav ms-auto align-items-lg-center gap-2">
-						<li className="nav-item">
+
+						{/* <li className="nav-item">
 							<Link to="/about" className="nav-link">
 								Acerca de
 							</Link>
-						</li>
+						</li> */}
+
+
 						<li className="nav-item">
-							<Link to="/register" className="btn btn-outline-primary">
+							<Link to="/login" className="btn btn-primary ms-lg-2">
+								Iniciar sesión
+							</Link>
+						</li>
+
+
+						<li className="nav-item">
+							<Link to="/signup" className="btn btn-outline-primary">
 								Registrarse
 							</Link>
 						</li>
-						<li className="nav-item">
-							<Link to="/login" className="btn btn-primary ms-lg-2">
-								Login
-							</Link>
-						</li>
+
 					</ul>
 				</div>
 
