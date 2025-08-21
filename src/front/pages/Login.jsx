@@ -4,12 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 export const Login = () => {
     const navigate = useNavigate();
 
+    // Formulario
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const [showPass, setShowPass] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -25,7 +28,10 @@ export const Login = () => {
             const resp = await fetch(`${backendUrl}/api/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({
+                                        email: email, 
+                                        password: password 
+                                    })
             });
 
             const data = await resp.json().catch(() => ({}));
@@ -56,7 +62,7 @@ export const Login = () => {
 
                             {error && <div className="alert alert-danger">{error}</div>}
 
-                            <form onSubmit={handleSubmit} noValidate>
+                            <form onSubmit={handleSubmit} noValidate>  {/* Por qué noValidate? */}
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
                                     <input
@@ -130,5 +136,7 @@ export const Login = () => {
                 </div>
             </div>
         </div>
+
+
     );
 };

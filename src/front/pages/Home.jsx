@@ -1,31 +1,39 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
+import ImageURL from "../assets/img/twin.jpg";
 
 export const Home = () => {
 	return (
 		<div className="container py-5">
+
+
 			{/* Hero */}
 			<div className="row align-items-center g-4">
+
 				<div className="col-lg-6 text-center text-lg-start">
+
 					<h1 className="display-4 fw-bold mb-3">¡Bienvenido!</h1>
+
 					<p className="lead mb-4">
 						Esta es la página de inicio. Usa los botones para entrar o crear tu cuenta.
 					</p>
 
+
 					<div className="d-flex flex-column flex-sm-row gap-3">
 						<Link to="/login" className="btn btn-primary btn-lg">
-							Ir a Login
+							Iniciar sesión
 						</Link>
-						<Link to="/register" className="btn btn-outline-secondary btn-lg">
+
+						<Link to="/signup" className="btn btn-outline-secondary btn-lg">
 							Registrarse
 						</Link>
 					</div>
+
 				</div>
 
 				<div className="col-lg-6 text-center">
 					<img
-						src={rigoImageUrl}
+						src={ImageURL}
 						alt="Rigo Baby"
 						className="img-fluid rounded-circle shadow-sm"
 						style={{ maxWidth: 260 }}
@@ -34,7 +42,8 @@ export const Home = () => {
 			</div>
 
 			{/* Accesos rápidos (opcional) */}
-			<div className="row row-cols-1 row-cols-md-3 g-3 mt-5">
+
+			{/* <div className="row row-cols-1 row-cols-md-3 g-3 mt-5">
 				<div className="col">
 					<div className="card h-100 shadow-sm border-0">
 						<div className="card-body">
@@ -67,7 +76,11 @@ export const Home = () => {
 						</div>
 					</div>
 				</div>
-			</div>
+
+			</div> */}
+
+
+			
 		</div>
 	);
 };
