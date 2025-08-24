@@ -10,8 +10,8 @@ export const Card = props => {
 
   return (
     
-        <div className="card col-12 col-sm-6 col-md-4 col-lg-3">
-    <img src="https://placehold.co/600x400" className="card-img-top" alt="..." />
+        <div className="card col-12 col-sm-6 col-md-4 col-lg-3 p-1">
+    <img src="https://placeholder.pics/svg/600x400" className="card-img-top" alt="..." />
     <div className="card-body">
       <p className="card-text">Description:</p>
       <p className="card-text">Address:</p>
