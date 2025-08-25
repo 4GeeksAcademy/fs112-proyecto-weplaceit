@@ -367,7 +367,7 @@ def get_all_spaces():
     
 
 ############################################
-#######   CREATE NEW SPACE           #######
+#######       CREATE NEW SPACE       #######
 ############################################
 """
 JSON request body para crear espacio:
@@ -441,3 +441,108 @@ def create_new_space():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al crear espacio.", "error": str(e)}), 500
+    
+
+
+############################################
+#######     CREATE NEW BOOKING       #######
+############################################
+"""
+JSON request body para crear reserva:
+{
+    "check_in":  "2029-10-01",
+    "check_out": "2029-12-01"
+}
+"""
+@api.route('/space/<int:space_id>/new-booking', methods=['POST'])
+@jwt_required()
+def create_new_booking(space_id):
+    
+    # Obtener el ID del usuario autenticado (quien hace la reserva)
+    current_user_id = get_jwt_identity()
+    
+    # Verificar que el usuario existe y está activo
+    user = User.query.get(current_user_id)
+    if not user or not user.is_active:
+        return jsonify({"msg": "Usuario no válido."}), 401
+    
+
+    # Verificar que el espacio existe y está activo
+    space = Space.query.get(space_id)
+    if not space:
+        return jsonify({"msg": "Espacio no encontrado."}), 404
+    
+    # if not space.is_active:
+    #     return jsonify({"msg": "Este espacio no está disponible."}), 400   # --->  FALTA IMPLEMENTARLO
+
+
+    # Verificar que el usuario no esté reservando su propio espacio
+    if space.owner_id == int(current_user_id):
+        return jsonify({"msg": "No puedes reservar tu propio espacio."}), 400
+
+    # Obtener los datos del request
+    data = request.get_json()
+
+    # Validar campos obligatorios
+    required_fields = ["check_in", "check_out"]
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"msg": f"El campo '{field}' es obligatorio."}), 400
+    
+
+    try:
+        # Cambiar datos del diccionario de tipo String "2025-08-20", parsearlo objeto de Python tipo datetime
+        check_in =  datetime.datetime.strptime(data["check_in"],  "%Y-%m-%d").date()
+        check_out = datetime.datetime.strptime(data["check_out"], "%Y-%m-%d").date()
+        
+        # Verificar que la fecha de inicio sea anterior a la de fin
+        if check_in >= check_out:
+            return jsonify({"msg": "La fecha de inicio debe ser anterior a la fecha de fin."}), 400
+        
+        # Verificar que la fecha de inicio no sea en el pasado
+        if check_in < datetime.date.today():
+            return jsonify({"msg": "No se pueden hacer reservas para fechas pasadas."}), 400
+        
+        # Verificar disponibilidad del espacio (opcional - puedes implementar lógica más compleja)
+        existing_booking = Booking.query.filter(
+            Booking.space_id  == space_id,
+            Booking.check_in   < check_out,
+            Booking.check_out  > check_in
+        ).first()
+        
+        if existing_booking:
+            return jsonify({"msg": "El espacio no está disponible en las fechas seleccionadas."}), 409
+        
+        # Calcular número de días y precio total
+        days = int( (check_out - check_in).days )
+        total_price = days * space.price_per_day
+        
+        # Crear nueva reserva
+        new_booking = Booking(
+            space_id    = space_id,
+            guest_id    = current_user_id,
+            check_in    = check_in,
+            total_days  = days,
+            check_out   = check_out,
+            total_price = total_price,
+            status      = "pending",  # Estados: pending, confirmed, cancelled
+        )
+        
+        # Guardar en base de datos
+        db.session.add(new_booking)
+        db.session.commit()
+        
+        return jsonify({
+            "msg":        "Reserva creada exitosamente.",
+            "booking":     new_booking.serialize(),
+            "total_days":  days,
+            "total_price": total_price
+        }), 201
+        
+    except ValueError:
+        return jsonify({"msg": "Formato de fecha inválido. Use YYYY-MM-DD"}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al crear reserva.", "error": str(e)}), 500
+    
+
