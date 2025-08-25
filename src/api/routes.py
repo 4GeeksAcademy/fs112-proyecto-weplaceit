@@ -336,3 +336,31 @@ def update_user_private_profile():
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": "Error al actualizar perfil.", 'error': str(e)}), 500
+    
+
+############################################
+#######   GET ALL SPACES (PUBLIC)    #######
+############################################
+"""
+Obtiene la lista de todos los espacios disponibles
+Endpoint público - no requiere autenticación
+"""
+@api.route('/spaces', methods=['GET'])
+def get_all_spaces():
+
+    try:
+        # Obtenemos todos los espacios de la base de datos
+        spaces = Space.query.all()
+
+
+        # Serializar todos los espacios
+        spaces_data = [space.serialize() for space in spaces]
+
+        return jsonify({
+            "msg":    "Espacios obtenidos exitosamente.",
+            "total":  len(spaces_data),
+            "spaces": spaces_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({"message": "Error al obtener espacios.", "error": str(e)}), 500
