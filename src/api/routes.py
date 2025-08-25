@@ -364,3 +364,80 @@ def get_all_spaces():
 
     except Exception as e:
         return jsonify({"message": "Error al obtener espacios.", "error": str(e)}), 500
+    
+
+############################################
+#######   CREATE NEW SPACE           #######
+############################################
+"""
+JSON request body para crear espacio:
+{
+    "title":         "Título del espacio",
+    "address":       "Calle, ciudad...",
+    "description":   "Descripción del espacio",
+    "price_per_day":  50.00,
+    "capacity":       10
+}
+"""
+@api.route('/new-space', methods=['POST'])
+@jwt_required()
+def create_new_space():
+
+    try: 
+        # Obtener el ID del usuario autenticado (propietario del espacio)
+        current_user_id = get_jwt_identity()
+        
+        # Verificar que el usuario existe y está activo
+        user = User.query.get(current_user_id)
+        if not user or not user.is_active:
+            return jsonify({"msg": "Usuario no válido."}), 401
+        
+        # Obtener los datos del request
+        data = request.get_json()
+        
+        # Validar campos obligatorios
+        required_fields = ["title", "address", "description", "price_per_day", "capacity"]
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({"msg": f"El campo '{field}' es obligatorio."}), 400
+    
+
+        try:
+            # Se validad algunos datos
+            price_per_day = Decimal(str(data['price_per_day']))
+            capacity = int(data['capacity'])
+            
+            if price_per_day <= 0:
+                return jsonify({'error': 'El precio por día debe ser un número positivo'}), 400
+            
+            if capacity <= 0:
+                return jsonify({'error': 'La capacidad debe ser un número positivo.'}), 400
+            
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Formato de precio o capacidad inválidos.'}), 400
+    
+
+        # Crear nuevo espacio
+        new_space = Space(
+            owner_id      = current_user_id,
+            title         = data["title"][:60],     # Se asegura de longitud máxima
+            address       = data["address"][:255],  # Se asegura de longitud máxima
+            description   = data["description"],
+            price_per_day = price_per_day,
+            capacity      = capacity
+            # is_active   = True # --> Solo si ee implementa esto en la BBDD
+        )
+        
+        # Guardar en base de datos
+        db.session.add(new_space)
+        db.session.commit()
+        
+        return jsonify({
+            "msg": "Espacio creado exitosamente.",
+            "space": new_space.serialize()
+        }), 201
+    
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al crear espacio.", "error": str(e)}), 500
