@@ -1,44 +1,79 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ImageURL from "../assets/img/twin.jpg";
+import { SpaceCard } from "../components/SpaceCard.jsx";
 
 export const Home = () => {
+	const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
+	const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
+	
+	
+	useEffect(() => {
+		document.title = "Weplaceit - Home";
+		fetchSpaces();
+	
+	}, []);
+
+	async function fetchSpaces() {
+		try {
+			const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/spaces");
+			if (!response.ok) {
+				throw new Error("Network response was not ok");
+			}
+			const data = await response.json();
+			console.log(data);
+			setSpaces(data.spaces);
+		} catch (error) {
+			console.error("Error fetching spaces:", error);
+		}
+	}
+
 	return (
 		<div className="container py-5">
-
-
 			{/* Hero */}
-			<div className="row align-items-center g-4">
-
-				<div className="col-lg-6 text-center text-lg-start">
-
+			<div className="row align-items-center g-4" style={{backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', borderRadius: '15px', padding: '20px', height: '30rem'}}>
+				<div className="col-lg-6 text-center text-lg-start bg-light bg-opacity-75 p-4 rounded">
 					<h1 className="display-4 fw-bold mb-3">¡Bienvenido!</h1>
+					{
+						localStorage.getItem("token") ? 
+							<p className="lead fst-italic mb-4">
+								~ Tú pones las personas y nosotros el espacio ~  
+							</p>
+						:
+						<>
+							<p className="lead mb-4">
+								Esta es la página de inicio. Usa los botones para entrar o crear tu cuenta.
+							</p>
 
-					<p className="lead mb-4">
-						Esta es la página de inicio. Usa los botones para entrar o crear tu cuenta.
-					</p>
+							<div className="d-flex flex-column flex-sm-row gap-3" >
+								<Link to="/login" className="btn btn-primary btn-lg">
+									Iniciar sesión
+								</Link>
 
-
-					<div className="d-flex flex-column flex-sm-row gap-3">
-						<Link to="/login" className="btn btn-primary btn-lg">
-							Iniciar sesión
-						</Link>
-
-						<Link to="/signup" className="btn btn-outline-secondary btn-lg">
-							Registrarse
-						</Link>
-					</div>
+								<Link to="/signup" className="btn btn-outline-secondary btn-lg">
+									Registrarse
+								</Link>
+							</div>
+						</>
+					}
 
 				</div>
 
-				<div className="col-lg-6 text-center">
-					<img
-						src={ImageURL}
-						alt="Rigo Baby"
-						className="img-fluid rounded-circle shadow-sm"
-						style={{ maxWidth: 260 }}
-					/>
-				</div>
+			</div>
+			<h1 className="w-100 text-center mt-5">Novedades</h1>
+			<div className="row g-4">
+				{
+					spaces.length > 0 ? spaces.slice(0, 3).map((space, index) => (
+						<div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
+							<SpaceCard 
+								title={space.title} 
+								description={space.description} 
+								price={space.price_per_day + "€/día"} 
+							/>
+						</div>
+					)) :
+					<p className="text-center">No hay espacios disponibles en este momento.</p>
+				}
 			</div>
 
 			{/* Accesos rápidos (opcional) */}

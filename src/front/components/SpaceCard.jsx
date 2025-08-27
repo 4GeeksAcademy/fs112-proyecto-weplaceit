@@ -25,12 +25,12 @@ export const SpaceCard = ({ images, title, description, chips, redirection, pric
     price = price || (Math.random()*100).toFixed(0) + "€/noche";
 
     // Generar un id único para el carrusel
-    const carouselId = `carousel-${title.replace(/\s+/g, "-").toLowerCase()}`;
+    const carouselId = `carousel-${title.replace(/\s+/g, "-").toLowerCase()}-${Math.floor(Math.random() * 10000)}`;
 
     return (
         <div className="card" style={{ width: "18rem", maxWidth: "100%", maxHeight: "100%", overflow: "hidden" }}>
             {/* Carrusel */}
-            <div id={carouselId} className="carousel slide mt-2" data-bs-ride="carousel" >
+            <div id={carouselId} className="carousel slide" data-bs-ride="carousel" >
                 <div className="carousel-inner" style={{maxHeight: "20%"}}>
                     {images.map((image, index) => (
                         <div
@@ -68,7 +68,7 @@ export const SpaceCard = ({ images, title, description, chips, redirection, pric
                 <p className="card-text">{description}</p>
                 <div className="d-flex flex-wrap gap-2">
                     {chips.map((chip, index) => (
-                        <span key={index} className="badge bg-primary">
+                        <span key={index} className="badge bg-light text-dark">
                             {chip}
                         </span>
                     ))}
