@@ -1,7 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export const Navbar = () => {
+
+	const navigate = useNavigate();
+
+	function logout() {
+		localStorage.removeItem("token");
+		navigate("/login");
+	}
+
+
+
 	return (
 		<nav className="navbar navbar-expand-lg navbar-light bg-light">
 			<div className="container">
@@ -35,18 +46,43 @@ export const Navbar = () => {
 						</li> */}
 
 
-						<li className="nav-item">
-							<Link to="/login" className="btn btn-primary ms-lg-2">
-								Iniciar sesión
-							</Link>
-						</li>
+						{
+							localStorage.getItem("token") ?
+
+								<>
+									<li className="nav-item">
+										<Link to="/profile" className="btn btn-primary ms-lg-2">
+											Mi perfil
+										</Link>
+									</li>
+
+									<li className="nav-item">
+										<Link to="/login" className="btn btn-danger ms-lg-2" onClick={logout}>
+											Cerrar sesión
+										</Link>
+									</li>
 
 
-						<li className="nav-item">
-							<Link to="/signup" className="btn btn-outline-primary">
-								Registrarse
-							</Link>
-						</li>
+								</>
+							:
+							<>
+								<li className="nav-item">
+									<Link to="/login" className="btn btn-primary ms-lg-2">
+										Iniciar sesión
+									</Link>
+								</li>
+
+
+								<li className="nav-item">
+									<Link to="/signup" className="btn btn-outline-primary">
+										Registrarse
+									</Link>
+								</li>
+							</>
+	
+						}
+
+
 
 					</ul>
 				</div>
