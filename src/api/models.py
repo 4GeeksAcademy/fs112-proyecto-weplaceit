@@ -28,7 +28,7 @@ db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = "user"
-    
+
 
     ### ATTRIBUTES ###
     id:         Mapped[int]      = mapped_column( Integer,     primary_key=True,                     autoincrement=True)
@@ -39,7 +39,7 @@ class User(db.Model):
     password:   Mapped[str]      = mapped_column( String(255),                      nullable=False)
     is_active:  Mapped[bool]     = mapped_column( Boolean,     default=True,        nullable=False)
     created_at: Mapped[datetime] = mapped_column( DateTime,    default=func.now(),  nullable=False)
-    
+
 
     ### RELATIONS ###
 
@@ -83,7 +83,7 @@ class User(db.Model):
 
 class Space(db.Model):
     __tablename__ = "space"
-    
+
 
     ### ATTRIBUTES ###
 
@@ -167,9 +167,9 @@ class Booking(db.Model):
 
     ### TABLE CONSTRAINTS ###
     __table_args__ = (
-        CheckConstraint('check_out > check_in', name='check_valid_booking_dates'),
-        CheckConstraint('total_days > 0',       name='check_positive_days'),
-        CheckConstraint('total_price > 0',      name='check_positive_total_price'),
+        CheckConstraint('check_out   > check_in', name='check_valid_booking_dates'),
+        CheckConstraint('total_days  > 0',        name='check_positive_days'),
+        CheckConstraint('total_price > 0',        name='check_positive_total_price'),
 
         # How to prevent double bookings for the same space and dates????
         # UniqueConstraint('space_id', 'check_in', 'check_out', name='unique_booking_dates'),   ### ---> Like this?
