@@ -15,7 +15,6 @@ export const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchProfileData();
-
   }, []);
 
   async function fetchProfileData() {
@@ -33,14 +32,9 @@ export const Profile = () => {
       });
 
       const { current_user } = await response.json();
-      console.log(current_user);
       
       setUserData(current_user);
       setUserSpaces(current_user.owned_spaces);
-
-      console.log("Data", userData);
-      console.log("User spaces", userSpaces);
-      console
 
     } catch (error) {
       console.error("Error fetching profile data:", error);
@@ -50,7 +44,14 @@ export const Profile = () => {
   return (
     <>
 
-      <UserCard username={userData.username} email={userData.email} firstName={userData.first_name} lastName={userData.last_name}/>
+      {userData && (
+        <UserCard
+          username={userData.username}
+          email={userData.email}
+          firstName={userData.first_name}
+          lastName={userData.last_name}
+        />
+      )}
 
       <div className="accordion-item">
         <h2 className="accordion-header m-3">
