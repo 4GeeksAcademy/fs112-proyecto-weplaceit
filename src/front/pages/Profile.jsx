@@ -6,6 +6,7 @@ import { UserCard } from "../components/UserCard";
 import { Card } from "../components/Card";
 import SpaceCard from "../components/SpaceCard";
 
+
 export const Profile = () => {
 
   const navigate = useNavigate();

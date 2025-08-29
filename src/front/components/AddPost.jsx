@@ -16,62 +16,30 @@ export const AddPost = (props) => {
     });
 
     const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData(prev => ({ ...prev, [name]: value }));
-  
-};
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+
+    };
 
 
-const handleFileChange = (e) => {
-  const files = Array.from(e.target.files);
-  const imageUrls = files.map(file => URL.createObjectURL(file));
-  setFormData(prev => ({ ...prev, images: imageUrls }));
-};
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        const imageUrls = files.map(file => URL.createObjectURL(file));
+        setFormData(prev => ({ ...prev, images: imageUrls }));
+    };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  console.log('Datos del formulario:', formData);
-  // Aquí podrías hacer un fetch/axios para enviar a tu backend
-};
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Datos del formulario:', formData);
+        // Aquí podrías hacer un fetch/axios para enviar a tu backend
+    };
 
 
 
 
     return (
 
-        <>
-            <div className="d-flex justify-content-center mt-3">
-
-                <div id="carouselExampleIndicators" className="carousel slide col-11 col-sm-7 col-md-7 col-lg-7">
-                    <div className="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                    </div>
-                    <div className="carousel-inner">
-                        <div className="carousel-item active">
-                            <img src="https://placeholder.pics/svg/600x400" className="d-block w-100" alt="..." />
-                        </div>
-                        <div className="carousel-item">
-                            <img src="https://placeholder.pics/svg/600x400" className="d-block w-100" alt="..." />
-                        </div>
-                        <div className="carousel-item">
-                            <img src="https://placeholder.pics/svg/600x400" className="d-block w-100" alt="..." />
-                        </div>
-                    </div>
-                    <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Previous</span>
-                    </button>
-                    <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Next</span>
-                    </button>
-                </div>
-            </div>
-
-
-
+        <div className="container py-3 my-4">
             <div className="d-flex justify-content-center mt-3">
 
                 <div className="ms-0 col-11 col-sm-7 col-md-7 col-lg-7">
@@ -87,7 +55,7 @@ const handleSubmit = (e) => {
                         <label htmlFor="inputtitle" className="col-form-label">Titulo</label>
                     </div>
                     <div className="me-0 col-9 pe-0">
-                        <input type="text" name="title" id="inputtitle" className="form-control" aria-describedby="titleHelpInline" value={formData.title} onChange={handleChange}/>
+                        <input type="text" name="title" id="inputtitle" className="form-control" aria-describedby="titleHelpInline" value={formData.title} onChange={handleChange} />
                     </div>
                 </div>
             </div>
@@ -152,7 +120,7 @@ const handleSubmit = (e) => {
             </div>
 
 
-        </>
+        </div>
 
 
     )
