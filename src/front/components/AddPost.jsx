@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 
 export const AddPost = (props) => {
 
+    const navigate = useNavigate();
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const { store, dispatch } = useGlobalReducer()
 
     const [formData, setFormData] = useState({
@@ -14,6 +17,8 @@ export const AddPost = (props) => {
         capacity: '',
         images: []
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -31,7 +36,27 @@ export const AddPost = (props) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Datos del formulario:', formData);
-        // Aquí podrías hacer un fetch/axios para enviar a tu backend
+
+        if (!backendUrl) {
+            setError("Configura VITE_BACKEND_URL en tu .env");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${backendUrl}/api/new-space`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.parse.stringify({
+
+                })
+            }
+            )
+
+        };
+
+    
     };
 
 
