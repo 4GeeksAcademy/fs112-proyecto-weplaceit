@@ -6,14 +6,14 @@ export const UserCard = (props) => {
 
     const { store, dispatch } = useGlobalReducer()
 
-
+    
 
     return (
         
             <div className="card m-3">
                 <div className="container-fluid d-flex row g-0">
                     <div className="d-flex col-4 justify-content-center p-1">
-                        <img src="https://placehold.co/600x400" className="img-fluid rounded-circle " alt="..." />
+                        <img src='https://placeholder.pics/svg/600x400' className="img-fluid rounded-circle " alt="..." />
                     </div>
                     <div className="col-4">
                         <div className="card-body">

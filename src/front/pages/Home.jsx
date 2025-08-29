@@ -29,6 +29,7 @@ export const Home = () => {
 	}
 
 	return (
+		
 		<div className="container py-5">
 			{/* Hero */}
 			<div className="row align-items-center g-4" style={{backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', borderRadius: '15px', padding: '20px', height: '30rem'}}>
