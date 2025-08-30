@@ -11,6 +11,7 @@ export const Home = () => {
 	useEffect(() => {
 		document.title = "Weplaceit - Home";
 		fetchSpaces();
+		window.scrollTo(0, 0);
 	
 	}, []);
 
