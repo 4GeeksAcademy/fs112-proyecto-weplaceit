@@ -5,13 +5,17 @@ import { SpaceCard } from "../components/SpaceCard.jsx";
 import ReserveButton from "../components/ReserveButton.jsx"; // <-- agregado
 
 export const Home = () => {
-  const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
-  const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
-  
-  useEffect(() => {
-    document.title = "Weplaceit - Home";
-    fetchSpaces();
-  }, []);
+
+	const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
+	const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
+	
+	
+	useEffect(() => {
+		document.title = "Weplaceit - Home";
+		fetchSpaces();
+		window.scrollTo(0, 0);
+	
+	}, []);
 
   async function fetchSpaces() {
     try {

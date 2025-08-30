@@ -2,6 +2,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import React, { useState, useEffect } from "react";
 
+import AuthService from "../services/AuthService";
+
 import { UserCard } from "../components/UserCard";
 import { Card } from "../components/Card";
 import SpaceCard from "../components/SpaceCard";
@@ -16,6 +18,12 @@ export const Profile = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchProfileData();
+    AuthService.verifyToken(navigate)
+    .then((result) => {
+      if (!result.valid) {
+        console.log("Comprobar Token",result.msg);
+      }
+    })
   }, []);
 
   function fmtDate(iso) { // <-- NUEVO
@@ -165,8 +173,8 @@ export const Profile = () => {
 
       <div className="accordion-item">
         <h2 className="accordion-header m-3">
-          <button className="accordion-button accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-            Your available spaces
+          <button className="accordion-button accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseOne">
+            Mis espacios disponibles
           </button>
         </h2>
         <div id="collapseFour" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
@@ -174,11 +182,11 @@ export const Profile = () => {
             <div className="d-flex flex-row overflow-auto gap-3 p-3">
               {
                 userSpaces && userSpaces.length > 0 ? userSpaces.map((space, index) => (
-                  <div key={space.space_id || index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
-                    <SpaceCard title={space.title} description={space.description} price={space.price_per_day + "€/día"} />
+                  <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
+                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} />
                   </div>
                 )) :
-                  <p className="text-center">You have no spaces available. <Link to="/post-space">Post one now!</Link></p>
+                  <p className="text-center">No tienes espacios disponibles. <Link to="/post-space">Crea tu espacio ahora!</Link></p>
               }
             </div>
           </div>

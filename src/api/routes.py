@@ -179,7 +179,29 @@ def handle_login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+############################################
+#######   VERIFY JWT TOKEN VALIDITY   ######
+############################################
+@api.route('/verify-token', methods=['GET'])
+@jwt_required()
+def verify_token():
+    try:
+        # Obtener el ID del usuario autenticado desde el token
+        current_user_id = get_jwt_identity()
 
+        # Verificar si el usuario existe en la base de datos
+        user = User.query.get(current_user_id)
+        if not user:
+            return jsonify({"msg": "Usuario no encontrado."}), 404
+
+        # Si el token es válido, devolver un mensaje de éxito
+        return jsonify({
+            "msg": "El token es válido.",
+            "user_id": current_user_id
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Error al verificar el token.", "error": str(e)}), 500
 ####################################################################################
 
 
