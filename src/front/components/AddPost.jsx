@@ -1,6 +1,7 @@
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const AddPost = (props) => {
 
@@ -33,30 +34,47 @@ export const AddPost = (props) => {
         setFormData(prev => ({ ...prev, images: imageUrls }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Datos del formulario:', formData);
+        setError(null);
+
 
         if (!backendUrl) {
             setError("Configura VITE_BACKEND_URL en tu .env");
             return;
         }
 
-        setLoading(true);
 
+        setLoading(true);
+         const token = localStorage.getItem("token");
         try {
             const res = await fetch(`${backendUrl}/api/new-space`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.parse.stringify({
-
+                headers: { "Content-Type": "application/json","Authorization": `Bearer ${token}` },
+                // credentials: "include", 
+                body: JSON.stringify({
+                    "title": formData.title,
+                    "address": formData.direction,
+                    "description": formData.description,
+                    "price_per_day": formData.price,
+                    "capacity": formData.capacity
                 })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert("Publicado correctamente");
+                navigate("/profile");
+            } else {
+                setError(data.msg || "Publicación fallida");
             }
-            )
-
-        };
-
-    
+        } catch (error) {
+            console.error("Publicación fallida", error);
+            setError("Error de red");
+        } finally {
+            setLoading(false);
+        }
     };
 
 
