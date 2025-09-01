@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import { FavoriteIcon } from "./FavoriteIcon";
 /**
  * @param {Object} props
  * @param {string[]} props.images
@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
  * @param {string[]} props.chips
  * @param {string}   props.redirection
  * @param {string}   props.price
- * @param {React.ReactNode} props.children   // aquí puedes pasar <ReserveButton />
+ * @param {React.ReactNode} props.children  // aquí puedes pasar <ReserveButton />
  */
 export const SpaceCard = ({
   images,
@@ -18,7 +18,8 @@ export const SpaceCard = ({
   chips,
   redirection,
   price,
-  children
+  children,
+  children1
 }) => {
   images = images && images.length
     ? images
@@ -79,12 +80,20 @@ export const SpaceCard = ({
 
         {/* Footer de acciones con poco aire, pero separado */}
         <div className="mt-3 pt-2 d-flex justify-content-between align-items-start border-top">
+
           <div className="d-flex gap-2">
             {children /* <ReserveButton /> */}
           </div>
+
+          <div className="d-flex gap-2">
           <Link to={redirection} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
             Ver más
           </Link>
+          </div>
+          <div className="d-flex gap-2">
+            <FavoriteIcon/>
+          </div>
+           
         </div>
       </div>
     </div>

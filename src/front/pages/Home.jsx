@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ImageURL from "../assets/img/twin.jpg";
 import { SpaceCard } from "../components/SpaceCard.jsx";
 import ReserveButton from "../components/ReserveButton.jsx"; // <-- agregado
+import { FavoriteIcon } from "../components/FavoriteIcon.jsx";
 
 export const Home = () => {
 
@@ -78,6 +79,7 @@ export const Home = () => {
               >
                 {/* Botón de reservar dentro de la card */}
                 <ReserveButton spaceId={space.space_id} />
+                
               </SpaceCard>
             </div>
           )) :
