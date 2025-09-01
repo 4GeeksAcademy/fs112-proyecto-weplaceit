@@ -24,9 +24,12 @@ export const UserCard = (props) => {
                         </div>
                     </div>
                     <div className="col m-3">
+                        <Link to ="/addplace">
+
                         <button className="btn btn-success">
-                            Post a place
+                            Publicar Espacio
                         </button>
+                        </Link>
                     </div>
                 </div>
             </div>
