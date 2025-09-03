@@ -57,6 +57,13 @@ class User(db.Model):
         cascade="all, delete-orphan"
     )
 
+    # One-to-many relationship with FavoritesSpaces --> shows the spaces this user has marked as favorite
+    favorite_spaces: Mapped[List["FavoritesSpaces"]] = relationship(
+        "FavoritesSpaces",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
 
     ### SERIALIZATION ###
     def serialize(self):
@@ -117,6 +124,13 @@ class Space(db.Model):
     # One-to-many relationship with Booking --> shows all the bookings related to a particular space
     bookings: Mapped[List["Booking"]] = relationship(
         "Booking", 
+        back_populates="space",
+        cascade="all, delete-orphan"
+    )
+
+    # One-to-many relationship with FavoritesSpaces --> shows all the users that have marked this space as favorite
+    favorited_by: Mapped[List["FavoritesSpaces"]] = relationship(
+        "FavoritesSpaces",
         back_populates="space",
         cascade="all, delete-orphan"
     )

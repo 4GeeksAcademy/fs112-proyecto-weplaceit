@@ -5,7 +5,7 @@ import datetime
 from decimal import Decimal
 import os
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Space, Booking, Payment
+from api.models import FavoritesSpaces, db, User, Space, Booking, Payment
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -567,4 +567,104 @@ def create_new_booking(space_id):
         db.session.rollback()
         return jsonify({"msg": "Error al crear reserva.", "error": str(e)}), 500
     
+############################################
+#######     GET USER FAVORITES       #######
+############################################
+@api.route('/user/get-favorites/<int:user_id>', methods=['GET'])
+@jwt_required()
+def get_user_favorites(user_id):
+    try:
+        # Obtener el ID del usuario autenticado desde el token
+        current_user_id = int(get_jwt_identity())
 
+        # Verificar que el usuario autenticado coincide con el ID solicitado
+        if current_user_id != user_id:
+            return jsonify({"msg": "No tienes permiso para acceder a los favoritos de este usuario.", "userid": user_id}), 403
+
+        # Buscar los favoritos del usuario
+        favorites = FavoritesSpaces.query.filter_by(user_id=user_id).all()
+
+        # Serializar los favoritos
+        favorites_data = [favorite.serialize() for favorite in favorites]
+
+        return jsonify({
+            "msg": "Favoritos obtenidos exitosamente.",
+            "favorites": favorites_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": "Error al obtener los favoritos.", "error": str(e)}), 500
+
+
+############################################
+#######     DELETE USER FAVORITE     #######
+############################################
+@api.route('/user/delete-favorite/<int:favorite_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user_favorite(favorite_id):
+    try:
+        # Obtener el ID del usuario autenticado desde el token
+        current_user_id = get_jwt_identity()
+
+        # Buscar el favorito por ID
+        favorite = FavoritesSpaces.query.get(favorite_id)
+
+        # Verificar si el favorito existe
+        if not favorite:
+            return jsonify({"msg": "El favorito no existe."}), 404
+
+        # Verificar que el favorito pertenece al usuario autenticado
+        if favorite.user_id != current_user_id:
+            return jsonify({"msg": "No tienes permiso para eliminar este favorito."}), 403
+
+        # Eliminar el favorito
+        db.session.delete(favorite)
+        db.session.commit()
+
+        return jsonify({"msg": "Favorito eliminado exitosamente."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al eliminar el favorito.", "error": str(e)}), 500
+
+############################################
+#######      CREATE USER FAVORITE     ######
+############################################
+@api.route('/user/create-favorite', methods=['POST'])
+@jwt_required()
+def create_user_favorite():
+    try:
+        # Obtener el ID del usuario autenticado desde el token
+        current_user_id = get_jwt_identity()
+
+        # Obtener los datos del request
+        data = request.get_json()
+        space_id = data.get("space_id")
+        print("DATA:", data)
+        # Validar que se haya proporcionado el ID del espacio
+        if not space_id:
+            return jsonify({"msg": "El campo 'space_id' es obligatorio."}), 400
+
+        # Verificar que el espacio existe
+        space = Space.query.get(space_id)
+        if not space:
+            return jsonify({"msg": "El espacio no existe."}), 404
+
+        # Verificar si el favorito ya existe
+        existing_favorite = FavoritesSpaces.query.filter_by(user_id=current_user_id, space_id=space_id).first()
+        if existing_favorite:
+            return jsonify({"msg": "Este espacio ya está en tus favoritos."}), 409
+
+        # Crear el nuevo favorito
+        new_favorite = FavoritesSpaces(user_id=current_user_id, space_id=space_id)
+        db.session.add(new_favorite)
+        db.session.commit()
+
+        return jsonify({
+            "msg": "Favorito creado exitosamente.",
+            "favorite": new_favorite.serialize()
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al crear el favorito.", "error": str(e)}), 500
