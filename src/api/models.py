@@ -271,3 +271,40 @@ class Payment(db.Model):
         return f"<Payment ID {self.id} | Booking ID:{self.booking_id} | Amount:{self.amount} {self.currency} | Payment method:{self.payment_method}>"
 
 
+############################################
+##########    Favorites_Spaces    ##########
+############################################
+
+class FavoritesSpaces(db.Model):
+    __tablename__ = "favorites_spaces"
+
+    ### ATTRIBUTES ###
+    id:        Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id:   Mapped[int] = mapped_column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    space_id:  Mapped[int] = mapped_column(Integer, ForeignKey("space.id", ondelete="CASCADE"), nullable=False)
+
+    ### RELATIONS ###
+
+    # Many-to-one relationship with User
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="favorite_spaces"
+    )
+
+    # Many-to-one relationship with Space
+    space: Mapped["Space"] = relationship(
+        "Space",
+        back_populates="favorited_by"
+    )
+
+    ### SERIALIZATION ###
+    def serialize(self):
+        return {
+            "favorite_id": self.id,
+            "user_id": self.user_id,
+            "space_id": self.space_id
+        }
+
+    ### __repr__ METHOD ###
+    def __repr__(self):
+        return f"<Favorite ID {self.id} | User ID: {self.user_id} | Space ID: {self.space_id}>"
