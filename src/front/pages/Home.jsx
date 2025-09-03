@@ -74,6 +74,7 @@ export const Home = () => {
                 title={space.title} 
                 description={space.description} 
                 price={space.price_per_day + "€/día"}
+                id={space.space_id}
                 // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
               >
                 {/* Botón de reservar dentro de la card */}

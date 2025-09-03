@@ -19,7 +19,7 @@ export const SpaceCard = ({
   redirection,
   price,
   children,
-  children1
+  id
 }) => {
   images = images && images.length
     ? images
@@ -86,7 +86,7 @@ export const SpaceCard = ({
           </div>
 
           <div className="d-flex gap-2">
-          <Link to={redirection} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
+          <Link to={`/detail/${id}`} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
             Ver más
           </Link>
           </div>
