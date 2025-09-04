@@ -14,7 +14,6 @@ export const Home = () => {
 		document.title = "Weplaceit - Home";
 		fetchSpaces();
 		window.scrollTo(0, 0);
-	
 	}, []);
 
   async function fetchSpaces() {
@@ -74,6 +73,7 @@ export const Home = () => {
                 title={space.title} 
                 description={space.description} 
                 price={space.price_per_day + "€/día"}
+                images={space.images.length > 0 ? space.images.map(img => img.url) : [ImageURL]}
                 // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
               >
                 {/* Botón de reservar dentro de la card */}
