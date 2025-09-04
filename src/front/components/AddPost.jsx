@@ -29,36 +29,43 @@ export const AddPost = (props) => {
 
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files);
-        const imageUrls = files.map(file => URL.createObjectURL(file));
-        setFormData(prev => ({ ...prev, images: imageUrls }));
+        const files = Array.from(e.target.files); // Obtén los archivos reales
+        setFormData(prev => ({ ...prev, images: files })); // Guarda los archivos en el estado
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
 
-
         if (!backendUrl) {
             setError("Configura VITE_BACKEND_URL en tu .env");
             return;
         }
 
-
         setLoading(true);
-         const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
+
         try {
+            // Crear un objeto FormData para enviar los datos del formulario y las imágenes
+            const formDataToSend = new FormData();
+            formDataToSend.append("title", formData.title);
+            formDataToSend.append("address", formData.direction);
+            formDataToSend.append("description", formData.description);
+            formDataToSend.append("price_per_day", formData.price);
+            formDataToSend.append("capacity", formData.capacity);
+
+            // Agregar las imágenes al FormData
+            formData.images.forEach((image, index) => {
+                formDataToSend.append("images", image); // Puedes usar un nombre genérico como "images"
+            });
+
+            // Enviar la solicitud al backend
             const res = await fetch(`${backendUrl}/api/new-space`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json","Authorization": `Bearer ${token}` },
-                // credentials: "include", 
-                body: JSON.stringify({
-                    "title": formData.title,
-                    "address": formData.direction,
-                    "description": formData.description,
-                    "price_per_day": formData.price,
-                    "capacity": formData.capacity
-                })
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formDataToSend,
             });
 
             const data = await res.json();

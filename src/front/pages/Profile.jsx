@@ -183,7 +183,7 @@ export const Profile = () => {
               {
                 userSpaces && userSpaces.length > 0 ? userSpaces.map((space, index) => (
                   <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
-                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} />
+                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
                   </div>
                 )) :
                   <p className="text-center">No tienes espacios disponibles. <Link to="/post-space">Crea tu espacio ahora!</Link></p>

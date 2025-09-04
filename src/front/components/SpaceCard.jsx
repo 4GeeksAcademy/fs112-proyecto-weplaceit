@@ -21,7 +21,7 @@ export const SpaceCard = ({
   children
 }) => {
   images = images && images.length
-    ? images
+    ? images.map(img => img.url)
     : ["https://placehold.co/600x400","https://placehold.co/600x400","https://placehold.co/600x400"];
 
   title = title || "Título por defecto";
