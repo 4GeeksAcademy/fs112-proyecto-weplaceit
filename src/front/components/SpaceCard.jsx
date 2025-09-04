@@ -21,7 +21,7 @@ export const SpaceCard = ({
   children
 }) => {
   images = images && images.length
-    ? images
+    ? images.map(img => img.url)
     : ["https://placehold.co/600x400","https://placehold.co/600x400","https://placehold.co/600x400"];
 
   title = title || "Título por defecto";
@@ -40,7 +40,7 @@ export const SpaceCard = ({
     >
       {/* Carrusel */}
       <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
-        <div className="carousel-inner" style={{ maxHeight: "20%", overflow: "hidden" }}>
+        <div className="carousel-inner" style={{ maxHeight: "100%", overflow: "hidden" }}>
           {images.map((image, index) => (
             <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
               <img

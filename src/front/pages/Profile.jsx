@@ -14,7 +14,7 @@ export const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [userSpaces, setUserSpaces] = useState(null);
   const [userBookings, setUserBookings] = useState([]); // <-- NUEVO
-
+  const [userFavorites, setUserFavorites] = useState(null);
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchProfileData();
@@ -59,12 +59,38 @@ export const Profile = () => {
       
       setUserData(current_user);
       setUserSpaces(current_user.owned_spaces);
-      setUserBookings(current_user.bookings || []); // <-- NUEVO
+      setUserBookings(current_user.bookings || []);
 
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
+
+  async function fetchUserFavorites() {
+    //fetch user data from backend
+    const token = localStorage.getItem("token");
+    if (!token) { navigate("/login"); return; } // <-- retorna para evitar seguir
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/get-favorites`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) navigate("/login");
+        return;
+      }
+
+      const { favorites } = await response.json();
+      setUserFavorites(favorites || []);
+
+    } catch (error) {
+      console.error("Error fetching user favorites:", error);
+    }
+  }
 
   return (
     <>
@@ -183,7 +209,7 @@ export const Profile = () => {
               {
                 userSpaces && userSpaces.length > 0 ? userSpaces.map((space, index) => (
                   <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
-                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} />
+                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
                   </div>
                 )) :
                   <p className="text-center">No tienes espacios disponibles. <Link to="/post-space">Crea tu espacio ahora!</Link></p>
