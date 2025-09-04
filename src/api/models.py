@@ -74,6 +74,7 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name":  self.last_name,
             "is_active":  self.is_active,
+            "favorite_spaces": [fav.space.serialize() for fav in self.favorite_spaces],
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
 

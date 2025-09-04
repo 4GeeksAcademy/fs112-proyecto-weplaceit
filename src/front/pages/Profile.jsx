@@ -60,37 +60,12 @@ export const Profile = () => {
       setUserData(current_user);
       setUserSpaces(current_user.owned_spaces);
       setUserBookings(current_user.bookings || []);
+      setUserFavorites(current_user.favorite_spaces || []);
 
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
-
-  async function fetchUserFavorites() {
-    //fetch user data from backend
-    const token = localStorage.getItem("token");
-    if (!token) { navigate("/login"); return; } // <-- retorna para evitar seguir
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/get-favorites`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        }
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) navigate("/login");
-        return;
-      }
-
-      const { favorites } = await response.json();
-      setUserFavorites(favorites || []);
-
-    } catch (error) {
-      console.error("Error fetching user favorites:", error);
-    }
-  }
 
   return (
     <>
@@ -107,18 +82,19 @@ export const Profile = () => {
       <div className="accordion-item">
         <h2 className="accordion-header m-3">
           <button className="accordion-button accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Your saved/favorite spaces
+            Tus espacios favoritos/guardados
           </button>
         </h2>
         <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
           <div className="accordion-body">
             <div className="d-flex flex-row overflow-auto gap-3 p-3">
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
+              {userFavorites && userFavorites.length > 0 ? userFavorites.map((space, index) => (
+                  <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
+                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
+                  </div>
+                )) : (
+                  <p className="mb-0 w-100 text-center">No tienes espacios favoritos/guardados todavía.</p>
+                )}
             </div>
           </div>
         </div>
@@ -127,7 +103,7 @@ export const Profile = () => {
       <div className="accordion-item">
         <h2 className="accordion-header m-3">
           <button className="accordion-button accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-            Your bookings
+            Mis reservas
           </button>
         </h2>
         <div id="collapseTwo" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
@@ -171,13 +147,18 @@ export const Profile = () => {
                 </table>
               </div>
             ) : (
-              <p className="mb-0">You have no bookings yet.</p>
+              <p className="mb-0 w-100 text-center">No tienes reservas todavía. 
+              <p>
+                <Link to="/home">
+                  <button className="btn btn-success">¡Mira nuestro catálogo!</button>
+                </Link></p>
+              </p>
             )}
           </div>
         </div>
       </div>
 
-      <div className="accordion-item">
+{/*       <div className="accordion-item">
         <h2 className="accordion-header m-3">
           <button className="accordion-button accordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
             Your booked spaces
@@ -195,7 +176,7 @@ export const Profile = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="accordion-item">
         <h2 className="accordion-header m-3">
@@ -212,7 +193,7 @@ export const Profile = () => {
                     <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
                   </div>
                 )) :
-                  <p className="text-center">No tienes espacios disponibles. <Link to="/post-space">Crea tu espacio ahora!</Link></p>
+                  <p className="mb-0 w-100 text-center">No tienes espacios disponibles. <Link to="/post-space">¡Crea tu espacio ahora!</Link></p>
               }
             </div>
           </div>
