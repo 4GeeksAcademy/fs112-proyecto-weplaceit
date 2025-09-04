@@ -611,22 +611,20 @@ def create_new_booking(space_id):
 ############################################
 #######     GET USER FAVORITES       #######
 ############################################
-@api.route('/user/get-favorites/<int:user_id>', methods=['GET'])
+@api.route('/user/get-favorites', methods=['GET'])
 @jwt_required()
-def get_user_favorites(user_id):
+def get_user_favorites():
     try:
         # Obtener el ID del usuario autenticado desde el token
-        current_user_id = int(get_jwt_identity())
+        user_id = int(get_jwt_identity())
 
         # Verificar que el usuario autenticado coincide con el ID solicitado
-        if current_user_id != user_id:
-            return jsonify({"msg": "No tienes permiso para acceder a los favoritos de este usuario.", "userid": user_id}), 403
 
         # Buscar los favoritos del usuario
         favorites = FavoritesSpaces.query.filter_by(user_id=user_id).all()
 
         # Serializar los favoritos
-        favorites_data = [favorite.serialize() for favorite in favorites]
+        favorites_data = [favorite.space.serialize() for favorite in favorites]
 
         return jsonify({
             "msg": "Favoritos obtenidos exitosamente.",

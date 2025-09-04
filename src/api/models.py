@@ -153,8 +153,8 @@ class Space(db.Model):
             "description":   self.description,
             "price_per_day": float(self.price_per_day),
             "capacity":      self.capacity,
-            "images": [image.serialize() for image in self.images]
-
+            "images": [image.serialize() for image in self.images],
+            "favorites": [fav.serialize() for fav in self.favorited_by]
         }
 
 
