@@ -22,7 +22,6 @@ export const Home = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      console.log(data);
       setSpaces(data.spaces);
     } catch (error) {
       console.error("Error fetching spaces:", error);
@@ -66,7 +65,7 @@ export const Home = () => {
       <h1 className="w-100 text-center mt-5">Novedades</h1>
       <div className="row g-4">
         {
-          spaces.length > 0 ? spaces.slice(0, 4).map((space, index) => (
+          spaces.length > 0 ? spaces.map((space, index) => (
             <div key={index} className="col-xl-3 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-center align-items-center">
               <SpaceCard 
                 title={space.title} 

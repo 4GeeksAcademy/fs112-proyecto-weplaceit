@@ -13,7 +13,7 @@ export const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [userSpaces, setUserSpaces] = useState(null);
-  const [userBookings, setUserBookings] = useState([]); // <-- NUEVO
+  const [userBookings, setUserBookings] = useState([]);
   const [userFavorites, setUserFavorites] = useState(null);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,7 +39,7 @@ export const Profile = () => {
   async function fetchProfileData() {
     //fetch user data from backend
     const token = localStorage.getItem("token");
-    if (!token) { navigate("/login"); return; } // <-- retorna para evitar seguir
+    if (!token) { navigate("/login"); return; } 
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/profile`, {
@@ -149,7 +149,7 @@ export const Profile = () => {
             ) : (
               <p className="mb-0 w-100 text-center">No tienes reservas todavía. 
               <p>
-                <Link to="/home">
+                <Link to="/">
                   <button className="btn btn-success">¡Mira nuestro catálogo!</button>
                 </Link></p>
               </p>

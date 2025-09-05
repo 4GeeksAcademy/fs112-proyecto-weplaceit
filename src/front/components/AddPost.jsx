@@ -56,7 +56,7 @@ export const AddPost = (props) => {
 
             // Agregar las imágenes al FormData
             formData.images.forEach((image, index) => {
-                formDataToSend.append("images", image); // Puedes usar un nombre genérico como "images"
+                formDataToSend.append("images", image); 
             });
 
             // Enviar la solicitud al backend
