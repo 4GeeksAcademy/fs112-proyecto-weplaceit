@@ -63,12 +63,14 @@ export const DetailComponent = (props) => {
             const dias = data && data.total_days ? String(data.total_days) : "";
             const total = data && data.total_price ? String(data.total_price) : "";
             setToastMsg("Reserva creada: " + dias + " día(s) · Total: " + total + " €");
+            alert("Reserva creada: " + dias + " día(s) · Total: " + total + " €");
             navigate("/profile");
             setOpen(false);
             if (typeof onBooked === "function") onBooked(data);
         } catch (e) {
             console.error(e);
             setInlineMsg(e && e.message ? e.message : "Error al reservar");
+            alert(inlineMsg);
         } finally {
             setLoading(false);
             
