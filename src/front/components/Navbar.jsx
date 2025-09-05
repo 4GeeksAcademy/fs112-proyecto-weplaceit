@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
+import logoImage from "../assets/img/logo.png";
 
 export const Navbar = () => {
 
@@ -19,7 +20,7 @@ export const Navbar = () => {
 
 				{/* Brand */}
 				<Link to="/" className="navbar-brand mb-0 h1">
-					[LOGO] Weplaceit
+					<img src={logoImage} alt="Weplaceit Logo" style={{ height: "80px", marginBottom: "-15px", marginTop: "-15px" }} />
 				</Link>
 
 				{/* Toggler (móvil) */}
@@ -61,29 +62,21 @@ export const Navbar = () => {
 											Cerrar sesión
 										</Link>
 									</li>
-
-
 								</>
 							:
-							<>
-								<li className="nav-item">
-									<Link to="/login" className="btn btn-primary ms-lg-2">
-										Iniciar sesión
-									</Link>
-								</li>
-
-
-								<li className="nav-item">
-									<Link to="/signup" className="btn btn-outline-primary">
-										Registrarse
-									</Link>
-								</li>
-							</>
-	
+								<>
+									<li className="nav-item">
+										<Link to="/login" className="btn btn-primary ms-lg-2">
+											Iniciar sesión
+										</Link>
+									</li>
+									<li className="nav-item">
+										<Link to="/signup" className="btn btn-outline-primary">
+											Registrarse
+										</Link>
+									</li>
+								</>
 						}
-
-
-
 					</ul>
 				</div>
 

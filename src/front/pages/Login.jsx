@@ -128,10 +128,6 @@ export const Login = () => {
                             </div>
                         </div>
                     </div>
-
-                    <p className="text-center text-muted small mt-3 mb-0">
-                        Usa <code>VITE_BACKEND_URL</code> (ej. <code>http://localhost:3001</code>)
-                    </p>
                 </div>
             </div>
         </div>

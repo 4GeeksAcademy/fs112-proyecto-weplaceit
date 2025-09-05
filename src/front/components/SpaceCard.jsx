@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ImageURL from "../assets/img/no-photo.png";
 
 /**
  * @param {Object} props
@@ -22,7 +23,7 @@ export const SpaceCard = ({
 }) => {
   images = images && images.length
     ? images.map(img => img.url)
-    : ["https://placehold.co/600x400","https://placehold.co/600x400","https://placehold.co/600x400"];
+    : [ImageURL];
 
   title = title || "Título por defecto";
   description = description || "Descripción por defecto del espacio.";
@@ -46,7 +47,7 @@ export const SpaceCard = ({
               <img
                 src={image}
                 className="d-block w-100"
-                style={{ maxWidth: "600px", maxHeight: "500px", objectFit: "cover" }}
+                style={{ width: "300px", height: "200px", objectFit: "cover" }}
                 alt={`Slide ${index}`}
               />
             </div>
@@ -63,13 +64,13 @@ export const SpaceCard = ({
       </div>
 
       {/* Contenido */}
-      <div className="card-body d-flex flex-column">
-        <h5 className="card-title">{title}</h5>
-        <h6 className="card-subtitle mb-2 text-muted">{price}</h6>
-        <p className="card-text">{description}</p>
+      <div className="card-body d-flex flex-column h-100" style={{ height: "600px" }}>
+        <h5 className="card-title" style={{ height: "10%" }}>{title}</h5>
+        <h6 className="card-subtitle mb-2 text-muted" style={{ height: "10%" }}>{price}</h6>
+        <p className="card-text" style={{ height: "50%" }}>{description}</p>
 
-        {/* Chips con menos margen inferior */}
-        <div className="d-flex flex-wrap gap-2 mb-2">
+        {/* Badges */}
+        <div className="d-flex flex-wrap gap-2" style={{ height: "10%" }}>
           {chips.map((chip, index) => (
             <span key={index} className="badge bg-light text-dark">
               {chip}
@@ -78,7 +79,7 @@ export const SpaceCard = ({
         </div>
 
         {/* Footer de acciones con poco aire, pero separado */}
-        <div className="mt-3 pt-2 d-flex justify-content-between align-items-start border-top">
+        <div className="mt-3 pt-2 d-flex justify-content-between align-items-start border-top" style={{ height: "20%" }}>
           <div className="d-flex gap-2">
             {children /* <ReserveButton /> */}
           </div>
