@@ -13,7 +13,7 @@ export const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [userSpaces, setUserSpaces] = useState(null);
-  const [userBookings, setUserBookings] = useState([]); // <-- NUEVO
+  const [userBookings, setUserBookings] = useState([]);
   const [userFavorites, setUserFavorites] = useState(null);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -39,7 +39,7 @@ export const Profile = () => {
   async function fetchProfileData() {
     //fetch user data from backend
     const token = localStorage.getItem("token");
-    if (!token) { navigate("/login"); return; } // <-- retorna para evitar seguir
+    if (!token) { navigate("/login"); return; } 
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/profile`, {
@@ -68,7 +68,7 @@ export const Profile = () => {
   };
 
   return (
-    <>
+    <div className="container py-5">
 
       {userData && (
         <UserCard
@@ -107,7 +107,7 @@ export const Profile = () => {
           </button>
         </h2>
         <div id="collapseTwo" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-          <div className="accordion-body">
+          <div className="accordion-body mx-auto" style={{width: "95%"}}>
             {/* --- Reservas reales del usuario --- */}
             {userBookings && userBookings.length > 0 ? (
               <div className="table-responsive">
@@ -129,7 +129,7 @@ export const Profile = () => {
                       <tr key={b.booking_id}>
                         <td>{b.booking_id}</td>
                         <td>
-                          <Link to={"/single/" + b.space_id}>Espacio #{b.space_id}</Link>
+                          {b.space.title}
                         </td>
                         <td>{fmtDate(b.check_in)}</td>
                         <td>{fmtDate(b.check_out)}</td>
@@ -149,7 +149,7 @@ export const Profile = () => {
             ) : (
               <p className="mb-0 w-100 text-center">No tienes reservas todavía. 
               <p>
-                <Link to="/home">
+                <Link to="/">
                   <button className="btn btn-success">¡Mira nuestro catálogo!</button>
                 </Link></p>
               </p>
@@ -199,6 +199,6 @@ export const Profile = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

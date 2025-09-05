@@ -232,6 +232,7 @@ class Booking(db.Model):
             "total_days":  self.total_days,
             "status":      self.status,
             "total_price": float(self.total_price),
+            "space":       self.space.serialize() if self.space else None,
             "created_at":  self.created_at.isoformat() if self.created_at else None
         }
 
