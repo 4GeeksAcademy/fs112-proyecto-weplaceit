@@ -107,7 +107,7 @@ export const Profile = () => {
           </button>
         </h2>
         <div id="collapseTwo" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-          <div className="accordion-body">
+          <div className="accordion-body container">
             {/* --- Reservas reales del usuario --- */}
             {userBookings && userBookings.length > 0 ? (
               <div className="table-responsive">
@@ -129,7 +129,7 @@ export const Profile = () => {
                       <tr key={b.booking_id}>
                         <td>{b.booking_id}</td>
                         <td>
-                          <Link to={"/single/" + b.space_id}>Espacio #{b.space_id}</Link>
+                          <Link to={"/single/" + b.space_id}>{b.space.title}</Link>
                         </td>
                         <td>{fmtDate(b.check_in)}</td>
                         <td>{fmtDate(b.check_out)}</td>
