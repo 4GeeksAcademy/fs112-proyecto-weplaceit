@@ -17,7 +17,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #Configuracion de Flask-Mail
 from flask_mail import Mail, Message
 import secrets
-
+from app import mail
 vite_url = os.getenv("VITE_BACKEND_URL")
 ##################################################
 
@@ -754,18 +754,30 @@ def create_user_favorite():
 @api.route('/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.get_json()
+    if not data or 'email' not in data:
+        return jsonify({'msg': 'Email es requerido'}), 400
+
     email = data.get('email')
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
 
+    # Genera un token seguro
     token = secrets.token_urlsafe(32)
     user.reset_token = token
     db.session.commit()
 
-    msg = Message('Recupera tu contraseña', sender='WePlaceIt@wpi.com', recipients=[email])
-    msg.body = f'Usa este enlace para recuperar tu contraseña: {vite_url}/reset-password/{token}'
-    mail.send(msg)
+    # Verifica que la configuración de Flask-Mail y mail esté inicializada
+    try:
+        msg = Message(
+            subject='Recupera tu contraseña',
+            sender='WePlaceIt@wpi.com',
+            recipients=[email]
+        )
+        msg.body = f'Usa este enlace para recuperar tu contraseña: {vite_url}/reset-password/{token}'
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({'msg': f'Error enviando correo: {str(e)}'}), 500
 
     return jsonify({'msg': 'Correo de recuperación enviado'}), 200
 

@@ -20,7 +20,7 @@ export const RequestResetPasswordForm = () => {
         const res = await fetch(`${backendUrl}/api/forgot-password`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }) // <-- el email como objeto
+            body: JSON.stringify({ email }) 
         });
         const data = await res.json();
 

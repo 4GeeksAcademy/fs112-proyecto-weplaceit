@@ -12,12 +12,13 @@ from datetime import datetime, date
 
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import api
+
 from api.admin import setup_admin
 from api.commands import setup_commands
 
 # Import Flask-Mail for email functionality and password reset
 from flask_mail import Mail, Message
+from flask_cors import CORS
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -46,11 +47,12 @@ jwt = JWTManager(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'tu_email@gmail.com'
-app.config['MAIL_PASSWORD'] = 'tu_contraseña'
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'jm.bebor@gmail.com'
+app.config['MAIL_PASSWORD'] = 'bsezzzgmpkyincui'
 mail = Mail(app)
 
-
+from api.routes import api
 ############################################################################
 ### DATABASE CONFIGURATION
 
@@ -78,6 +80,8 @@ setup_commands(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
+# Configure CORS
+CORS(app, origins=["https://improved-memory-wrp447q9x9w39vvw-3000.app.github.dev"], supports_credentials=True)
 
 
 # Handle/serialize errors like a JSON object
