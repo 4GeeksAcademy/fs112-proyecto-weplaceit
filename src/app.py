@@ -16,6 +16,8 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+# Import Flask-Mail for email functionality and password reset
+from flask_mail import Mail, Message
 
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -40,7 +42,13 @@ app.config["JWT_SECRET_KEY"] = "a3f5c8d9e7b1c4a6d2f8e9b7a1c3d4e5f6a7b8c9d0e1f2a3
 # Inicializa JWTManager con la aplicación Flask
 jwt = JWTManager(app)
 ############################################################################
-
+### CONFIGURACIÓN FLASK-MAIL PARA ENVÍO DE CORREOS Y RESTABLECIMIENTO DE CONTRASEÑA
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'tu_email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'tu_contraseña'
+mail = Mail(app)
 
 
 ############################################################################
