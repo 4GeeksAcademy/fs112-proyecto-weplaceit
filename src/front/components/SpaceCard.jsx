@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import ImageURL from "../assets/img/no-photo.png";
 
+import { FavoriteIcon } from "./FavoriteIcon";
 /**
  * @param {Object} props
  * @param {string[]} props.images
@@ -10,7 +11,7 @@ import ImageURL from "../assets/img/no-photo.png";
  * @param {string[]} props.chips
  * @param {string}   props.redirection
  * @param {string}   props.price
- * @param {React.ReactNode} props.children   // aquí puedes pasar <ReserveButton />
+ * @param {React.ReactNode} props.children  // aquí puedes pasar <ReserveButton />
  */
 export const SpaceCard = ({
   images,
@@ -19,7 +20,8 @@ export const SpaceCard = ({
   chips,
   redirection,
   price,
-  children
+  children,
+  id
 }) => {
   images = images && images.length
     ? images.map(img => img.url)
@@ -83,9 +85,16 @@ export const SpaceCard = ({
           <div className="d-flex gap-2">
             {children /* <ReserveButton /> */}
           </div>
-          <Link to={redirection} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
+
+          <div className="d-flex gap-2">
+          <Link to={`/detail/${id}`} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
             Ver más
           </Link>
+          </div>
+          <div className="d-flex gap-2">
+            <FavoriteIcon/>
+          </div>
+           
         </div>
       </div>
     </div>

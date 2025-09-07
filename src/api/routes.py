@@ -392,6 +392,34 @@ def get_all_spaces():
     except Exception as e:
         return jsonify({"message": "Error al obtener espacios.", "error": str(e)}), 500
     
+    ############################################
+#######   GET ONE SPACE (PUBLIC)    #######
+############################################
+"""
+Obtiene la lista de todos los espacios disponibles
+Endpoint público - no requiere autenticación
+"""
+@api.route('/spaces/<int:space_id>', methods=['GET'])
+def get_one_space(space_id):
+    try:
+        # Obtenemos el espacio que coincide con el ID
+        space = Space.query.get(space_id)
+
+        if not space:
+            return jsonify({"message": f"No se encontró el espacio con ID {space_id}."}), 404
+
+        # Serializar el espacio
+        space_data = space.serialize()
+
+        return jsonify({
+            "msg":    "Espacio obtenido exitosamente.",
+            "space":  space_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({"message": "Error al obtener el espacio.", "error": str(e)}), 500
+
+    
 
 ############################################
 #######       CREATE NEW SPACE       #######
