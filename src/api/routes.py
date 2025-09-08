@@ -19,6 +19,7 @@ from flask_mail import Mail, Message
 import secrets
 from app import mail
 vite_url = os.getenv("VITE_BACKEND_URL")
+FRONTEND_URL = os.getenv("VITE_FRONTEND_URL", "https://improved-memory-wrp447q9x9w39vvw-3000.app.github.dev")
 ##################################################
 
 
@@ -774,7 +775,7 @@ def forgot_password():
             sender='WePlaceIt@wpi.com',
             recipients=[email]
         )
-        msg.body = f'Usa este enlace para recuperar tu contraseña: {vite_url}/reset-password/{token}'
+        msg.body = f'Usa este enlace para recuperar tu contraseña: {FRONTEND_URL}/reset-password/{token}'
         mail.send(msg)
     except Exception as e:
         return jsonify({'msg': f'Error enviando correo: {str(e)}'}), 500
@@ -790,11 +791,19 @@ def forgot_password():
 def reset_password(token):
     data = request.get_json()
     new_password = data.get('password')
+
+   
+    if not new_password or len(new_password) < 6:
+        return jsonify({'msg': 'La nueva contraseña es requerida y debe tener al menos 6 caracteres.'}), 400
+
+    
     user = User.query.filter_by(reset_token=token).first()
     if not user:
-        return jsonify({'msg': 'Token inválido'}), 400
+        return jsonify({'msg': 'Token inválido o expirado.'}), 400
 
+    
     user.password = generate_password_hash(new_password)
     user.reset_token = None
     db.session.commit()
-    return jsonify({'msg': 'Contraseña actualizada'}), 200
+
+    return jsonify({'msg': 'Contraseña actualizada correctamente.'}), 200
