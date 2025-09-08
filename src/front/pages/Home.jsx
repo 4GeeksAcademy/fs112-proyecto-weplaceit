@@ -72,10 +72,12 @@ export const Home = () => {
                 description={space.description} 
                 price={space.price_per_day + "€/día"}
                 images={space.images}
+                id={space.space_id}
                 // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
               >
                 {/* Botón de reservar dentro de la card */}
                 <ReserveButton spaceId={space.space_id} />
+                
               </SpaceCard>
             </div>
           )) :

@@ -12,17 +12,20 @@ from datetime import datetime, date
 
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import api
+
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+# Import Flask-Mail for email functionality and password reset
+from flask_mail import Mail, Message
+from flask_cors import CORS
 
+app = Flask(__name__)
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../dist/')
 
-app = Flask(__name__)
 
 app.url_map.strict_slashes = False
 
@@ -40,9 +43,16 @@ app.config["JWT_SECRET_KEY"] = "a3f5c8d9e7b1c4a6d2f8e9b7a1c3d4e5f6a7b8c9d0e1f2a3
 # Inicializa JWTManager con la aplicación Flask
 jwt = JWTManager(app)
 ############################################################################
+### CONFIGURACIÓN FLASK-MAIL PARA ENVÍO DE CORREOS Y RESTABLECIMIENTO DE CONTRASEÑA
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'jm.bebor@gmail.com'
+app.config['MAIL_PASSWORD'] = 'bsezzzgmpkyincui'
+mail = Mail(app)
 
-
-
+from api.routes import api
 ############################################################################
 ### DATABASE CONFIGURATION
 
@@ -70,6 +80,8 @@ setup_commands(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
+# Configure CORS
+CORS(app, origins=["https://improved-memory-wrp447q9x9w39vvw-3000.app.github.dev"], supports_credentials=True)
 
 
 # Handle/serialize errors like a JSON object
