@@ -148,10 +148,10 @@ export const Profile = () => {
               </div>
             ) : (
               <p className="mb-0 w-100 text-center">No tienes reservas todavía. 
-              <p>
+              
                 <Link to="/">
                   <button className="btn btn-success">¡Mira nuestro catálogo!</button>
-                </Link></p>
+                </Link>
               </p>
             )}
           </div>
