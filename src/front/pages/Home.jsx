@@ -7,11 +7,14 @@ export const Home = () => {
 
 	const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
 	const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
-	
-	
+	const token = localStorage.getItem("token");
+	const [userFavorites, setUserFavorites] = useState(null);
+
+
 	useEffect(() => {
 		document.title = "Weplaceit - Home";
 		fetchSpaces();
+    if (!token==null) {getFavorites();} 
 		window.scrollTo(0, 0);
 	}, []);
 
@@ -25,6 +28,31 @@ export const Home = () => {
       setSpaces(data.spaces);
     } catch (error) {
       console.error("Error fetching spaces:", error);
+    }
+  }
+
+  async function getFavorites() {
+    //fetch user data from backend
+    const token = localStorage.getItem("token");
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/get-favorites`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401);
+        return;
+      }
+      const data = await response.json();
+    setUserFavorites(data.favorites);
+  }
+    catch (error) {
+      console.error("Error fetching profile data:", error);
     }
   }
 
@@ -73,6 +101,7 @@ export const Home = () => {
                 price={space.price_per_day + "€/día"}
                 images={space.images}
                 id={space.space_id}
+                isFavorite={userFavorites ? userFavorites.includes(space.space_id) : false}
                 // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
               >
                 {/* Botón de reservar dentro de la card */}

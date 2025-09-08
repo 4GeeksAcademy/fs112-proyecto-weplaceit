@@ -1,10 +1,11 @@
 {/* <i class="fa-solid fa-bookmark"></i>
 <i class="fa-regular fa-bookmark"></i> */}
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export const FavoriteIcon = ({ itemId, onAddFavorite, onRemoveFavorite }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+export const FavoriteIcon = ({ itemId, isFav}) => {
+  const [isFavorite, setIsFavorite] = useState(isFav);
+    const [userFavorites, setUserFavorites] = useState(null);
 
   const toggleFavorite = () => {
     if (isFavorite) {
@@ -12,8 +13,55 @@ export const FavoriteIcon = ({ itemId, onAddFavorite, onRemoveFavorite }) => {
     } else {
       onAddFavorite(itemId);
     }
-    setIsFavorite(!isFavorite);
+    
   };
+
+const onAddFavorite = async (itemId) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/create-favorite`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ space_id: itemId })
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    // Actualiza el estado local para reflejar el cambio
+    setIsFavorite(true);
+  } catch (error) {
+    console.error("Error adding favorite:", error);
+  }
+};
+
+const onRemoveFavorite = async (itemId) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/delete-favorite/{}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ space_id: itemId })
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    // Actualiza el estado local para reflejar el cambio
+    setIsFavorite(false);
+  } catch (error) {
+    console.error("Error removing favorite:", error);
+  }
+};
+
+
+  
 
   return (
     <i

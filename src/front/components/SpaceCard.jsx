@@ -21,7 +21,8 @@ export const SpaceCard = ({
   redirection,
   price,
   children,
-  id
+  id,
+  isFavorite
 }) => {
   images = images && images.length
     ? images.map(img => img.url)
@@ -92,7 +93,7 @@ export const SpaceCard = ({
           </Link>
           </div>
           <div className="d-flex gap-2">
-            <FavoriteIcon/>
+            <FavoriteIcon isFav={isFavorite} itemId={id} />
           </div>
            
         </div>
