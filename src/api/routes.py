@@ -14,9 +14,20 @@ from supabase import create_client, Client
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
 
+#Configuracion de Flask-Mail
+from flask_mail import Mail, Message
+import secrets
+from app import mail
+vite_url = os.getenv("VITE_BACKEND_URL")
+FRONTEND_URL = os.getenv("VITE_FRONTEND_URL", "https://improved-memory-wrp447q9x9w39vvw-3000.app.github.dev")
+##################################################
+
+
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(supabase_url, supabase_key)
+
+
 
 # Registrar el blueprint
 api = Blueprint('api', __name__)
@@ -735,3 +746,64 @@ def create_user_favorite():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al crear el favorito.", "error": str(e)}), 500
+    
+
+############################################
+#######    RESET PASSWORD REQUEST    #######
+############################################
+
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    if not data or 'email' not in data:
+        return jsonify({'msg': 'Email es requerido'}), 400
+
+    email = data.get('email')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    # Genera un token seguro
+    token = secrets.token_urlsafe(32)
+    user.reset_token = token
+    db.session.commit()
+
+    # Verifica que la configuración de Flask-Mail y mail esté inicializada
+    try:
+        msg = Message(
+            subject='Recupera tu contraseña',
+            sender='WePlaceIt@wpi.com',
+            recipients=[email]
+        )
+        msg.body = f'Usa este enlace para recuperar tu contraseña: {FRONTEND_URL}/reset-password/{token}'
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({'msg': f'Error enviando correo: {str(e)}'}), 500
+
+    return jsonify({'msg': 'Correo de recuperación enviado'}), 200
+
+
+############################################
+#######        RESET PASSWORD        #######
+############################################
+
+@api.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    data = request.get_json()
+    new_password = data.get('password')
+
+   
+    if not new_password or len(new_password) < 6:
+        return jsonify({'msg': 'La nueva contraseña es requerida y debe tener al menos 6 caracteres.'}), 400
+
+    
+    user = User.query.filter_by(reset_token=token).first()
+    if not user:
+        return jsonify({'msg': 'Token inválido o expirado.'}), 400
+
+    
+    user.password = generate_password_hash(new_password)
+    user.reset_token = None
+    db.session.commit()
+
+    return jsonify({'msg': 'Contraseña actualizada correctamente.'}), 200
