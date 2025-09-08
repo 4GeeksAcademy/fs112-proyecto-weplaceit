@@ -15,7 +15,8 @@ import { Signup } from "./pages/Signup";
 import { Profile } from "./pages/Profile";
 import { AddPlace } from "./pages/AddPlace";
 import { Detail } from "./pages/Detail";
-
+import {ForgotPassword} from "./pages/ForgotPassword"
+import {ResetPassword} from "./pages/ResetPassword"
 
 
 export const router = createBrowserRouter(
@@ -41,6 +42,8 @@ export const router = createBrowserRouter(
       <Route path="/profile" element={<Profile/>}/>
       <Route path="/addplace" element={<AddPlace/>}/>
       <Route path="/detail/:id" element={<Detail/>}/>
+      <Route path="/forgot-password" element={<ForgotPassword/>}/>
+      <Route path="/reset-password/:token" element={<ResetPassword />} />
     </Route>
   )
 );
