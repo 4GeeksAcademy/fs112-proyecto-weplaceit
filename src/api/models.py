@@ -38,7 +38,7 @@ class User(db.Model):
     last_name:  Mapped[str]      = mapped_column( String(40),                       nullable=False)
     password:   Mapped[str]      = mapped_column( String(255),                      nullable=False)
     is_active:  Mapped[bool]     = mapped_column( Boolean,     default=True,        nullable=False)
-    image_url:  Mapped[Optional[str]] = mapped_column( String(255),                      nullable=True)
+    image_url:  Mapped[str] = mapped_column( String(255),                      nullable=True)
     created_at: Mapped[datetime] = mapped_column( DateTime,    default=func.now(),  nullable=False)
     reset_token:Mapped[str]      = mapped_column(String(128),                       nullable=True)
 
@@ -74,6 +74,7 @@ class User(db.Model):
             "username":   self.username,
             "first_name": self.first_name,
             "last_name":  self.last_name,
+            "image_url":  self.image_url,
             "is_active":  self.is_active,
             "favorite_spaces": [fav.space.serialize() for fav in self.favorite_spaces],
             "created_at": self.created_at.isoformat() if self.created_at else None
