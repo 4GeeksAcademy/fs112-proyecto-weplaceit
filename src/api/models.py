@@ -39,7 +39,7 @@ class User(db.Model):
     password:   Mapped[str]      = mapped_column( String(255),                      nullable=False)
     is_active:  Mapped[bool]     = mapped_column( Boolean,     default=True,        nullable=False)
     created_at: Mapped[datetime] = mapped_column( DateTime,    default=func.now(),  nullable=False)
-
+    reset_token:Mapped[str]      = mapped_column(String(128),                       nullable=True)
 
     ### RELATIONS ###
 
@@ -74,6 +74,7 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name":  self.last_name,
             "is_active":  self.is_active,
+            "favorite_spaces": [fav.space.serialize() for fav in self.favorite_spaces],
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
 
@@ -135,6 +136,13 @@ class Space(db.Model):
         cascade="all, delete-orphan"
     )
 
+    # One-to-many relationship with SpaceImages
+    images: Mapped[List["SpaceImages"]] = relationship(
+        "SpaceImages",
+        back_populates="space",
+        cascade="all, delete-orphan"
+    )
+
 
     ### SERIALIZATION ###
     def serialize(self):
@@ -146,8 +154,8 @@ class Space(db.Model):
             "description":   self.description,
             "price_per_day": float(self.price_per_day),
             "capacity":      self.capacity,
-            "created_at":    self.created_at.isoformat() if self.created_at else None,
-            "updated_at":    self.updated_at.isoformat() if self.updated_at else None
+            "images": [image.serialize() for image in self.images],
+            "favorites": [fav.serialize() for fav in self.favorited_by]
         }
 
 
@@ -224,6 +232,7 @@ class Booking(db.Model):
             "total_days":  self.total_days,
             "status":      self.status,
             "total_price": float(self.total_price),
+            "space":       self.space.serialize() if self.space else None,
             "created_at":  self.created_at.isoformat() if self.created_at else None
         }
 
@@ -322,3 +331,35 @@ class FavoritesSpaces(db.Model):
     ### __repr__ METHOD ###
     def __repr__(self):
         return f"<Favorite ID {self.id} | User ID: {self.user_id} | Space ID: {self.space_id}>"
+    
+############################################
+##########      Space Images       #########
+############################################
+
+class SpaceImages(db.Model):
+    __tablename__ = "space_images"
+
+    ### ATTRIBUTES ###
+    id:        Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    space_id:  Mapped[int] = mapped_column(Integer, ForeignKey("space.id", ondelete="CASCADE"), nullable=False)
+    url:       Mapped[str] = mapped_column(String(255), nullable=False)
+
+    ### RELATIONS ###
+
+    # Many-to-one relationship with Space
+    space: Mapped["Space"] = relationship(
+        "Space",
+        back_populates="images"
+    )
+
+    ### SERIALIZATION ###
+    def serialize(self):
+        return {
+            "image_id": self.id,
+            "space_id": self.space_id,
+            "url": self.url
+        }
+
+    ### __repr__ METHOD ###
+    def __repr__(self):
+        return f"<Image ID {self.id} | Space ID: {self.space_id} | URL: {self.url}>"

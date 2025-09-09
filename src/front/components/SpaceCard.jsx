@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ImageURL from "../assets/img/no-photo.png";
 
+import { FavoriteIcon } from "./FavoriteIcon";
 /**
  * @param {Object} props
  * @param {string[]} props.images
@@ -9,7 +11,7 @@ import { Link } from "react-router-dom";
  * @param {string[]} props.chips
  * @param {string}   props.redirection
  * @param {string}   props.price
- * @param {React.ReactNode} props.children   // aquí puedes pasar <ReserveButton />
+ * @param {React.ReactNode} props.children  // aquí puedes pasar <ReserveButton />
  */
 export const SpaceCard = ({
   images,
@@ -18,11 +20,12 @@ export const SpaceCard = ({
   chips,
   redirection,
   price,
-  children
+  children,
+  id
 }) => {
   images = images && images.length
-    ? images
-    : ["https://placehold.co/600x400","https://placehold.co/600x400","https://placehold.co/600x400"];
+    ? images.map(img => img.url)
+    : [ImageURL];
 
   title = title || "Título por defecto";
   description = description || "Descripción por defecto del espacio.";
@@ -40,13 +43,13 @@ export const SpaceCard = ({
     >
       {/* Carrusel */}
       <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
-        <div className="carousel-inner" style={{ maxHeight: "20%", overflow: "hidden" }}>
+        <div className="carousel-inner" style={{ maxHeight: "100%", overflow: "hidden" }}>
           {images.map((image, index) => (
             <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
               <img
                 src={image}
                 className="d-block w-100"
-                style={{ maxWidth: "600px", maxHeight: "500px", objectFit: "cover" }}
+                style={{ width: "300px", height: "200px", objectFit: "cover" }}
                 alt={`Slide ${index}`}
               />
             </div>
@@ -84,9 +87,16 @@ export const SpaceCard = ({
           <div className="d-flex gap-2 flex-nowrap">
             {children /* <ReserveButton /> */}
           </div>
-          <Link to={redirection} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
+
+          <div className="d-flex gap-2">
+          <Link to={`/detail/${id}`} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
             Ver más
           </Link>
+          </div>
+          <div className="d-flex gap-2">
+            <FavoriteIcon/>
+          </div>
+           
         </div>
       </div>
     </div>

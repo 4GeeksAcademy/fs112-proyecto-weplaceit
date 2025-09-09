@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router"; // dejo tu import tal cual
+import logoImage from "../assets/img/logo.png";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export const Navbar = () => {
           >
             W
           </span>
-          <span>[LOGO] Weplaceit</span>
+          <img src={logoImage} alt="Weplaceit Logo" style={{ height: "80px", marginBottom: "-15px", marginTop: "-15px" }} />
         </Link>
 
         {/* Toggler (móvil) */}

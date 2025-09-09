@@ -5,12 +5,28 @@ import datetime
 from decimal import Decimal
 import os
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import FavoritesSpaces, db, User, Space, Booking, Payment
+from api.models import FavoritesSpaces, SpaceImages, db, User, Space, Booking, Payment
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+secure_filename = __import__('werkzeug').utils.secure_filename
+from supabase import create_client, Client
 
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import generate_password_hash, check_password_hash
+
+#Configuracion de Flask-Mail
+from flask_mail import Mail, Message
+import secrets
+from app import mail
+vite_url = os.getenv("VITE_BACKEND_URL")
+FRONTEND_URL = os.getenv("VITE_FRONTEND_URL", "https://improved-memory-wrp447q9x9w39vvw-3000.app.github.dev")
+##################################################
+
+
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
+
 
 
 # Registrar el blueprint
@@ -387,6 +403,34 @@ def get_all_spaces():
     except Exception as e:
         return jsonify({"message": "Error al obtener espacios.", "error": str(e)}), 500
     
+    ############################################
+#######   GET ONE SPACE (PUBLIC)    #######
+############################################
+"""
+Obtiene la lista de todos los espacios disponibles
+Endpoint público - no requiere autenticación
+"""
+@api.route('/spaces/<int:space_id>', methods=['GET'])
+def get_one_space(space_id):
+    try:
+        # Obtenemos el espacio que coincide con el ID
+        space = Space.query.get(space_id)
+
+        if not space:
+            return jsonify({"message": f"No se encontró el espacio con ID {space_id}."}), 404
+
+        # Serializar el espacio
+        space_data = space.serialize()
+
+        return jsonify({
+            "msg":    "Espacio obtenido exitosamente.",
+            "space":  space_data
+        }), 200
+
+    except Exception as e:
+        return jsonify({"message": "Error al obtener el espacio.", "error": str(e)}), 500
+
+    
 
 ############################################
 #######       CREATE NEW SPACE       #######
@@ -409,51 +453,87 @@ def create_new_space():
         # Obtener el ID del usuario autenticado (propietario del espacio)
         current_user_id = get_jwt_identity()
         
+        # Depurar el contenido de request.form y request.files
+        print("Encabezados de la solicitud:", request.headers)
+        print("Contenido de request.files:", request.files)
+        print("Contenido de request.form:", request.form)
+
         # Verificar que el usuario existe y está activo
         user = User.query.get(current_user_id)
         if not user or not user.is_active:
             return jsonify({"msg": "Usuario no válido."}), 401
         
         # Obtener los datos del request
-        data = request.get_json()
-        
-        # Validar campos obligatorios
+        title = request.form.get("title")
+        address = request.form.get("address")
+        description = request.form.get("description")
+        price_per_day = request.form.get("price_per_day")
+        capacity = request.form.get("capacity")
+
+        # Comprobar campos obligatorios
         required_fields = ["title", "address", "description", "price_per_day", "capacity"]
         for field in required_fields:
-            if not data.get(field):
+            if not locals()[field]:
                 return jsonify({"msg": f"El campo '{field}' es obligatorio."}), 400
-    
 
+
+        # Validar y convertir datos
         try:
-            # Se validad algunos datos
-            price_per_day = Decimal(str(data['price_per_day']))
-            capacity = int(data['capacity'])
-            
+            price_per_day = Decimal(price_per_day)
+            capacity = int(capacity)
+
             if price_per_day <= 0:
                 return jsonify({'error': 'El precio por día debe ser un número positivo'}), 400
-            
+
             if capacity <= 0:
                 return jsonify({'error': 'La capacidad debe ser un número positivo.'}), 400
-            
+
         except (ValueError, TypeError):
             return jsonify({'error': 'Formato de precio o capacidad inválidos.'}), 400
-    
 
-        # Crear nuevo espacio
+        # Crear el nuevo espacio
         new_space = Space(
-            owner_id      = current_user_id,
-            title         = data["title"][:60],     # Se asegura de longitud máxima
-            address       = data["address"][:255],  # Se asegura de longitud máxima
-            description   = data["description"],
-            price_per_day = price_per_day,
-            capacity      = capacity
-            # is_active   = True # --> Solo si ee implementa esto en la BBDD
+            owner_id=current_user_id,
+            title=title[:60],  # Se asegura de longitud máxima
+            address=address[:255],  # Se asegura de longitud máxima
+            description=description,
+            price_per_day=price_per_day,
+            capacity=capacity
         )
         
         # Guardar en base de datos
         db.session.add(new_space)
-        db.session.commit()
+        db.session.flush()  # Obtener el ID del nuevo espacio sin confirmar aún
+
         
+        # Manejar las imágenes (si se enviaron)
+        if "images" in request.files:
+            images = request.files.getlist("images")
+            for image in images:
+                print("Nombre de archivo:", image.filename)
+            
+            for image in images:
+                # Leer el contenido del archivo como bytes
+                file_content = image.read()
+
+                # Subir la imagen a Supabase
+                filename = f"{new_space.id}/{secure_filename(image.filename)}"
+                response = supabase.storage.from_("postImages").upload(filename, file_content)
+                print("Respuesta de Supabase:", response)
+                # Verificar si la subida fue exitosa
+                if response.path is None:
+                    return jsonify({"msg": "Error al subir la imagen a Supabase."}), 500
+                # Obtener la URL pública de la imagen
+                public_url = supabase.storage.from_("postImages").get_public_url(filename)
+
+                # Guardar la URL de la imagen en la base de datos
+                new_image = SpaceImages(space_id=new_space.id, url=public_url)
+                db.session.add(new_image)
+        else:
+            print("No se encontraron imágenes en request.files")
+
+        db.session.commit()  # Confirmar los cambios en la tabla SpaceImages
+
         return jsonify({
             "msg": "Espacio creado exitosamente.",
             "space": new_space.serialize()
@@ -570,22 +650,20 @@ def create_new_booking(space_id):
 ############################################
 #######     GET USER FAVORITES       #######
 ############################################
-@api.route('/user/get-favorites/<int:user_id>', methods=['GET'])
+@api.route('/user/get-favorites', methods=['GET'])
 @jwt_required()
-def get_user_favorites(user_id):
+def get_user_favorites():
     try:
         # Obtener el ID del usuario autenticado desde el token
-        current_user_id = int(get_jwt_identity())
+        user_id = int(get_jwt_identity())
 
         # Verificar que el usuario autenticado coincide con el ID solicitado
-        if current_user_id != user_id:
-            return jsonify({"msg": "No tienes permiso para acceder a los favoritos de este usuario.", "userid": user_id}), 403
 
         # Buscar los favoritos del usuario
         favorites = FavoritesSpaces.query.filter_by(user_id=user_id).all()
 
         # Serializar los favoritos
-        favorites_data = [favorite.serialize() for favorite in favorites]
+        favorites_data = [favorite.space.serialize() for favorite in favorites]
 
         return jsonify({
             "msg": "Favoritos obtenidos exitosamente.",
@@ -668,3 +746,64 @@ def create_user_favorite():
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al crear el favorito.", "error": str(e)}), 500
+    
+
+############################################
+#######    RESET PASSWORD REQUEST    #######
+############################################
+
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    if not data or 'email' not in data:
+        return jsonify({'msg': 'Email es requerido'}), 400
+
+    email = data.get('email')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    # Genera un token seguro
+    token = secrets.token_urlsafe(32)
+    user.reset_token = token
+    db.session.commit()
+
+    # Verifica que la configuración de Flask-Mail y mail esté inicializada
+    try:
+        msg = Message(
+            subject='Recupera tu contraseña',
+            sender='WePlaceIt@wpi.com',
+            recipients=[email]
+        )
+        msg.body = f'Usa este enlace para recuperar tu contraseña: {FRONTEND_URL}/reset-password/{token}'
+        mail.send(msg)
+    except Exception as e:
+        return jsonify({'msg': f'Error enviando correo: {str(e)}'}), 500
+
+    return jsonify({'msg': 'Correo de recuperación enviado'}), 200
+
+
+############################################
+#######        RESET PASSWORD        #######
+############################################
+
+@api.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    data = request.get_json()
+    new_password = data.get('password')
+
+   
+    if not new_password or len(new_password) < 6:
+        return jsonify({'msg': 'La nueva contraseña es requerida y debe tener al menos 6 caracteres.'}), 400
+
+    
+    user = User.query.filter_by(reset_token=token).first()
+    if not user:
+        return jsonify({'msg': 'Token inválido o expirado.'}), 400
+
+    
+    user.password = generate_password_hash(new_password)
+    user.reset_token = None
+    db.session.commit()
+
+    return jsonify({'msg': 'Contraseña actualizada correctamente.'}), 200

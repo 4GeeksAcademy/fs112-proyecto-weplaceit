@@ -75,6 +75,8 @@ export const Profile = () => {
       setUserData(current_user);
       setUserSpaces(current_user.owned_spaces);
       setUserBookings(current_user.bookings || []);
+      setUserFavorites(current_user.favorite_spaces || []);
+
     } catch (error) {
       console.error("Error fetching profile data:", error);
     } finally {

@@ -190,14 +190,13 @@ export const Login = () => {
                 <Link to="/signup">Regístrate</Link>
                 {/* Si tu ruta es /register, usa <Link to="/register"> */}
               </div>
+              <div className="text-center mt-3">
+                  <small className="text-muted">¿Olvidaste tu contraseña?</small>{" "}
+                  <Link to="/forgot-password">Recuperar contraseña</Link>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Pie informativo */}
-        <p className="text-center text-muted small mt-3 mb-0">
-          Usa <code>VITE_BACKEND_URL</code> (p. ej. <code>http://localhost:3001</code>)
-        </p>
       </div>
     </div>
   );
