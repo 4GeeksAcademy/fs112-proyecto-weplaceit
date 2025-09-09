@@ -2,8 +2,12 @@
 <i class="fa-regular fa-bookmark"></i> */}
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const FavoriteIcon = ({ itemId, isFav}) => {
+
+  const navigate = useNavigate();
+
   const [isFavorite, setIsFavorite] = useState(isFav);
     const [userFavorites, setUserFavorites] = useState(null);
 
@@ -16,8 +20,14 @@ export const FavoriteIcon = ({ itemId, isFav}) => {
     
   };
 
+  useEffect(() => {
+    setIsFavorite(isFav);
+    console.log(isFav);
+  }, [isFav]);
+
 const onAddFavorite = async (itemId) => {
   const token = localStorage.getItem("token");
+  if (token==null) {navigate("/login"); return;}
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/create-favorite`, {
       method: "POST",

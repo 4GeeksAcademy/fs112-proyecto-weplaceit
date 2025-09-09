@@ -93,7 +93,3 @@ database.database
 database.db
 diagram.png
 __pycache__/
-
-
-# Ignorar la carpeta de migraciones
-/migrations/

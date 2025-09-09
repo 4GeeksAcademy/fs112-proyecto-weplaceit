@@ -5,18 +5,18 @@ import ReserveButton from "../components/ReserveButton.jsx"; // <-- agregado
 
 export const Home = () => {
 
-	const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
-	const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
-	const token = localStorage.getItem("token");
-	const [userFavorites, setUserFavorites] = useState(null);
+  const imgUrl = "https://mopaqxezhidsfzfyxedp.supabase.co/storage/v1/object/public/images/home_background.png";
+  const [spaces, setSpaces] = useState([]); // Estado para almacenar los espacios
+  const token = localStorage.getItem("token");
+  const [userFavorites, setUserFavorites] = useState(null);
 
 
-	useEffect(() => {
-		document.title = "Weplaceit - Home";
-		fetchSpaces();
-    if (!token==null) {getFavorites();} 
-		window.scrollTo(0, 0);
-	}, []);
+  useEffect(() => {
+    document.title = "Weplaceit - Home";
+    fetchSpaces();
+    if (token) { getFavorites(); }
+    window.scrollTo(0, 0);
+  }, []);
 
   async function fetchSpaces() {
     try {
@@ -34,7 +34,7 @@ export const Home = () => {
   async function getFavorites() {
     //fetch user data from backend
     const token = localStorage.getItem("token");
-    
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/get-favorites`, {
         method: "GET",
@@ -49,8 +49,9 @@ export const Home = () => {
         return;
       }
       const data = await response.json();
-    setUserFavorites(data.favorites);
-  }
+      console.log("Favoritos recibidos:", data.favorites); // Añade este log
+      setUserFavorites(data.favorites);
+    }
     catch (error) {
       console.error("Error fetching profile data:", error);
     }
@@ -61,31 +62,31 @@ export const Home = () => {
       {/* Hero */}
       <div
         className="row align-items-center g-4"
-        style={{backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', borderRadius: '15px', padding: '20px', height: '30rem'}}
+        style={{ backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', borderRadius: '15px', padding: '20px', height: '30rem' }}
       >
         <div className="col-lg-6 text-center text-lg-start bg-light bg-opacity-75 p-4 rounded">
           <h1 className="display-4 fw-bold mb-3">¡Bienvenido!</h1>
           {
-            localStorage.getItem("token") ? 
+            localStorage.getItem("token") ?
               <p className="lead fst-italic mb-4">
-                ~ Tú pones las personas y nosotros el espacio ~  
+                ~ Tú pones las personas y nosotros el espacio ~
               </p>
-            :
-            <>
-              <p className="lead mb-4">
-                Esta es la página de inicio. Usa los botones para entrar o crear tu cuenta.
-              </p>
+              :
+              <>
+                <p className="lead mb-4">
+                  Esta es la página de inicio. Usa los botones para entrar o crear tu cuenta.
+                </p>
 
-              <div className="d-flex flex-column flex-sm-row gap-3" >
-                <Link to="/login" className="btn btn-primary btn-lg">
-                  Iniciar sesión
-                </Link>
+                <div className="d-flex flex-column flex-sm-row gap-3" >
+                  <Link to="/login" className="btn btn-primary btn-lg">
+                    Iniciar sesión
+                  </Link>
 
-                <Link to="/signup" className="btn btn-outline-secondary btn-lg">
-                  Registrarse
-                </Link>
-              </div>
-            </>
+                  <Link to="/signup" className="btn btn-outline-secondary btn-lg">
+                    Registrarse
+                  </Link>
+                </div>
+              </>
           }
         </div>
       </div>
@@ -95,22 +96,21 @@ export const Home = () => {
         {
           spaces.length > 0 ? spaces.map((space, index) => (
             <div key={index} className="col-xl-3 col-md-6 col-sm-12 col-xs-12 d-flex justify-content-center align-items-center">
-              <SpaceCard 
-                title={space.title} 
-                description={space.description} 
+              <SpaceCard
+                title={space.title}
+                description={space.description}
                 price={space.price_per_day + "€/día"}
                 images={space.images}
                 id={space.space_id}
-                isFavorite={userFavorites ? userFavorites.includes(space.space_id) : false}
-                // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
+                isFavorite={userFavorites ? userFavorites.some(fav => Number(fav.space_id) === Number(space.space_id)) : false}                // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
               >
                 {/* Botón de reservar dentro de la card */}
                 <ReserveButton spaceId={space.space_id} />
-                
+
               </SpaceCard>
             </div>
           )) :
-          <p className="text-center">No hay espacios disponibles en este momento.</p>
+            <p className="text-center">No hay espacios disponibles en este momento.</p>
         }
       </div>
 
