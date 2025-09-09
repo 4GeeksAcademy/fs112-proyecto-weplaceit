@@ -1,40 +1,61 @@
+// src/components/UserCard.jsx
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export const UserCard = (props) => {
+  const { store, dispatch } = useGlobalReducer();
 
-    const { store, dispatch } = useGlobalReducer()
+  const fullName =
+    props.firstName && props.lastName
+      ? `${props.firstName} ${props.lastName}`
+      : "Nombre Completo";
 
-    
+  const username = props.username || "Username";
+  const email = props.email || "Email";
 
-    return (
-        
-            <div className="card m-3">
-                <div className="container-fluid d-flex row g-0 justify-content-center align-items-center">
-                    <div className="d-flex col-12 col-md-4 col-lg-4 justify-content-center p-1" style={{maxWidth: "150px", overflow: "hidden"}}>
-                        <img src='https://placeholder.pics/svg/600x400' className="img-fluid rounded-circle " alt="..." />
-                    </div>
-                    <div className="col-12 col-md-4 col-lg-4">
-                        <div className="card-body row" style={{marginLeft: "10%"}}>
-                            <p className="card-title col-12">{props.firstName && props.lastName ? `${props.firstName} ${props.lastName}` : "Nombre Completo"}  {/* <i className="fa-solid fa-pen"></i> */}</p>
-                            <p className="card-title col-12">{props.username || "Username"} {/* <i className="fa-solid fa-pen"></i> */}</p>
-                            <p className="col-12">{props.email || "Email"} {/* <i className="fa-solid fa-pen"></i> */}</p>
-                            {/*<p className="card-text"><small className="text-body-secondary">{props.contact || "Contact"}</small> <i className="fa-solid fa-pen"></i></p>*/}
-                        </div>
-                    </div>
-                    <div className="col-12 col-md-4 col-lg-4 m-3 d-flex justify-content-center align-items-center">
-                        <Link to ="/addplace">
+  // Si no tienes avatar real, usa el placeholder actual o un avatar con iniciales:
+  const avatarSrc =
+    props.avatarUrl ||
+    "https://placeholder.pics/svg/600x400";
 
-                        <button className="btn btn-success">
-                            Publicar Espacio
-                        </button>
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        
+  return (
+    <div className="card border-0 shadow-sm rounded-4 m-3 glass">
+      <div className="row g-0 align-items-center p-3 p-md-4">
+        {/* Avatar */}
+        <div className="col-12 col-md-4 d-flex justify-content-center mb-3 mb-md-0">
+          <div className="user-avatar-wrapper">
+            <img
+              src={avatarSrc}
+              alt="Avatar"
+              className="user-avatar"
+            />
+          </div>
+        </div>
 
-    )
+        {/* Datos */}
+        <div className="col-12 col-md-5">
+          <div className="card-body p-0">
+            <p className="user-name mb-1">
+              {fullName} <i className="fa-solid fa-pen ms-1"></i>
+            </p>    
+            <p className="user-username mb-1">
+              @{username} <i className="fa-solid fa-pen ms-1"></i>
+            </p>
+            <p className="user-email mb-0">
+              {email} <i className="fa-solid fa-pen ms-1"></i>
+            </p>
+          </div>
+        </div>
 
-}
+        {/* Acción */}
+        <div className="col-12 col-md-3 text-md-end mt-3 mt-md-0">
+          <Link to="/addplace" className="btn btn-success px-4 fw-semibold w-100 w-md-auto">
+            Publicar Espacio
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserCard;
