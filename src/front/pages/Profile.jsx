@@ -11,6 +11,7 @@ export const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [userSpaces, setUserSpaces] = useState(null);
   const [userBookings, setUserBookings] = useState([]);
+  const [userFavorites, setUserFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -99,9 +100,9 @@ export const Profile = () => {
               <div className="glass p-3 p-md-4 rounded-4 shadow-lg animate-fadein">
                 {loading ? (
                   <div className="placeholder-wave">
-                    <div className="placeholder col-8 mb-2" style={{height: 24}}></div>
-                    <div className="placeholder col-6 mb-2" style={{height: 18}}></div>
-                    <div className="placeholder col-10 mb-0" style={{height: 18}}></div>
+                    <div className="placeholder col-8 mb-2" style={{ height: 24 }}></div>
+                    <div className="placeholder col-6 mb-2" style={{ height: 18 }}></div>
+                    <div className="placeholder col-10 mb-0" style={{ height: 18 }}></div>
                   </div>
                 ) : (
                   <UserCard
@@ -166,12 +167,13 @@ export const Profile = () => {
           <div id="favCollapse" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
             <div className="accordion-body">
               <div className="scroll-mask d-flex flex-row overflow-auto gap-3 p-3">
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
-                <Card />
+                {userFavorites && userFavorites.length > 0 ? userFavorites.map((space, index) => (
+                  <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
+                    <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
+                  </div>
+                )) : (
+                  <p className="mb-0 w-100 text-center">No tienes espacios favoritos/guardados todavía.</p>
+                )}
               </div>
             </div>
           </div>
@@ -189,9 +191,9 @@ export const Profile = () => {
             <div className="accordion-body">
               {loading ? (
                 <div className="placeholder-wave">
-                  <div className="placeholder col-12 mb-2" style={{height: 40}}></div>
-                  <div className="placeholder col-10 mb-2" style={{height: 40}}></div>
-                  <div className="placeholder col-8" style={{height: 40}}></div>
+                  <div className="placeholder col-12 mb-2" style={{ height: 40 }}></div>
+                  <div className="placeholder col-10 mb-2" style={{ height: 40 }}></div>
+                  <div className="placeholder col-8" style={{ height: 40 }}></div>
                 </div>
               ) : userBookings && userBookings.length > 0 ? (
                 <div className="table-responsive rounded-4 border profile-table-wrap">
@@ -213,9 +215,9 @@ export const Profile = () => {
                         <tr key={b.booking_id} className="row-soft">
                           <td className="fw-semibold">{b.booking_id}</td>
                           <td>
-                            <Link to={"/single/" + b.space_id} className="link-primary text-decoration-none">
-                              Espacio #{b.space_id}
-                            </Link>
+                            <td className="">
+                              {b.space.title}
+                            </td>
                           </td>
                           <td>{fmtDate(b.check_in)}</td>
                           <td>{fmtDate(b.check_out)}</td>
@@ -227,7 +229,7 @@ export const Profile = () => {
                             </span>
                           </td>
                           <td className="text-end">
-                            <Link to={"/single/" + b.space_id} className="btn btn-sm btn-outline-primary">
+                            <Link to={`/detail/${b.space_id}`} className="btn btn-sm btn-outline-primary">
                               Ver espacio
                             </Link>
                           </td>
@@ -260,7 +262,14 @@ export const Profile = () => {
           <div id="bookedSpacesCollapse" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
             <div className="accordion-body">
               <div className="scroll-mask d-flex flex-row overflow-auto gap-3 p-3">
-                <Card /><Card /><Card /><Card /><Card /><Card />
+                {
+                  userSpaces && userSpaces.length > 0 ? userSpaces.map((space, index) => (
+                    <div key={index} className="col-md-3 col-sm-6 col-xs-12 d-flex justify-content-center align-items-center">
+                      <SpaceCard key={index} title={space.title} description={space.description} price={space.price_per_day + "€/día"} images={space.images} />
+                    </div>
+                  )) :
+                    <p className="mb-0 w-100 text-center">No tienes espacios disponibles. <Link to="/post-space">¡Crea tu espacio ahora!</Link></p>
+                }
               </div>
             </div>
           </div>
@@ -279,13 +288,13 @@ export const Profile = () => {
               <div className="scroll-mask d-flex flex-row overflow-auto gap-3 p-3">
                 {loading ? (
                   <>
-                    <div className="placeholder col-3" style={{height: 220}}></div>
-                    <div className="placeholder col-3" style={{height: 220}}></div>
-                    <div className="placeholder col-3" style={{height: 220}}></div>
+                    <div className="placeholder col-3" style={{ height: 220 }}></div>
+                    <div className="placeholder col-3" style={{ height: 220 }}></div>
+                    <div className="placeholder col-3" style={{ height: 220 }}></div>
                   </>
                 ) : userSpaces && userSpaces.length > 0 ? (
                   userSpaces.map((space, index) => (
-                    <div key={index} className="flex-shrink-0" style={{width: 288}}>
+                    <div key={index} className="flex-shrink-0" style={{ width: 288 }}>
                       <SpaceCard
                         title={space.title}
                         description={space.description}
