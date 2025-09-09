@@ -63,12 +63,14 @@ export const SpaceCard = ({
       </div>
 
       {/* Contenido */}
+      {/* OJO: convertimos el body en columna flex para poder usar mt-auto abajo */}
       <div className="card-body d-flex flex-column">
         <h5 className="card-title">{title}</h5>
         <h6 className="card-subtitle mb-2 text-muted">{price}</h6>
-        <p className="card-text">{description}</p>
 
-        {/* Chips con menos margen inferior */}
+        {/* (Opcional) limita la descripción para que todas las cards tengan altura parecida */}
+        <p className="card-text line-clamp-3">{description}</p>
+
         <div className="d-flex flex-wrap gap-2 mb-2">
           {chips.map((chip, index) => (
             <span key={index} className="badge bg-light text-dark">
@@ -77,9 +79,9 @@ export const SpaceCard = ({
           ))}
         </div>
 
-        {/* Footer de acciones con poco aire, pero separado */}
-        <div className="mt-3 pt-2 d-flex justify-content-between align-items-start border-top">
-          <div className="d-flex gap-2">
+        {/* Footer de acciones: mt-auto lo pega al fondo, flex-nowrap evita saltos de línea */}
+        <div className="mt-auto pt-2 d-flex justify-content-between align-items-start border-top flex-nowrap spacecard-actions">
+          <div className="d-flex gap-2 flex-nowrap">
             {children /* <ReserveButton /> */}
           </div>
           <Link to={redirection} className="btn btn-primary btn-sm" style={{ minWidth: 84 }}>
