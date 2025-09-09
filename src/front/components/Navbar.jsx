@@ -29,13 +29,6 @@ export const Navbar = () => {
       <div className="container">
         {/* Brand */}
         <Link to="/" className="navbar-brand mb-0 h1 d-flex align-items-center gap-2 brand-hover">
-          {/* Mini “logo” redondo (opcional, puedes quitarlo) */}
-          <span
-            className="rounded-circle d-inline-flex align-items-center justify-content-center bg-primary text-white fw-bold"
-            style={{ width: 30, height: 30, fontSize: 14 }}
-          >
-            W
-          </span>
           <img src={logoImage} alt="Weplaceit Logo" style={{ height: "80px", marginBottom: "-15px", marginTop: "-15px" }} />
         </Link>
 

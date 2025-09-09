@@ -148,9 +148,6 @@ export const Login = () => {
                     Recordarme
                   </label>
                 </div>
-                <Link to="/recover" className="small">
-                  ¿Olvidaste tu contraseña?
-                </Link>
               </div>
 
               {/* Botón enviar */}
