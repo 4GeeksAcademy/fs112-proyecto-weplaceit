@@ -5,6 +5,9 @@ import { Link } from "react-router-dom";
 export const UserCard = (props) => {
   const { store, dispatch } = useGlobalReducer();
 
+  console.log("UserCard props:", props);
+  
+
   const fullName =
     props.firstName && props.lastName
       ? `${props.firstName} ${props.lastName}`

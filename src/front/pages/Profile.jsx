@@ -77,7 +77,8 @@ export const Profile = () => {
       setUserSpaces(current_user.owned_spaces);
       setUserBookings(current_user.bookings || []);
       setUserFavorites(current_user.favorite_spaces || []);
-
+      //console.log("Profile data:", current_user);
+      
     } catch (error) {
       console.error("Error fetching profile data:", error);
     } finally {
@@ -110,6 +111,7 @@ export const Profile = () => {
                     email={userData?.email}
                     firstName={userData?.first_name}
                     lastName={userData?.last_name}
+                    avatarUrl={userData?.image_url}
                   />
                 )}
               </div>
