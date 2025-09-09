@@ -94,3 +94,162 @@
   background: linear-gradient(90deg, #0d6efd, #6ea8fe);
   border-radius: 999px;
 }
+
+
+/* DetailComponent.css — versión light/clean, alto contraste, mínima y factorzada */
+
+/* ======= Tokens ======= */
+:root{
+  --bg:#ffffff;
+  --text:#111827;                 /* gris casi negro */
+  --muted:#64748b;                /* slate-500 */
+  --heading:#0b1220;              /* título */
+  --primary:#2563eb;              /* azul accesible */
+  --primary-600:#1d4ed8;
+  --ring:0 0 0 3px rgba(37,99,235,.25);
+
+  --radius:18px;
+  --radius-sm:12px;
+
+  --border:1px solid rgba(17,24,39,.08);
+  --card:#ffffff;
+  --shadow:0 10px 24px rgba(17,24,39,.08);
+
+  --chip-bg:rgba(37,99,235,.10);
+  --chip-border:1px solid rgba(37,99,235,.20);
+}
+
+/* ======= Layout base ======= */
+.detail-nord{ color:var(--text); background:var(--bg); }
+.detail-nord.container{ max-width:1100px; padding:28px 12px 48px; }
+
+/* ======= Media / Carrusel ======= */
+.media-frame{
+  background:var(--card);
+  border:var(--border);
+  border-radius:calc(var(--radius) + 6px);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.carousel .carousel-item img{
+  aspect-ratio:16/9; object-fit:cover;
+  transition:transform .6s ease, filter .3s ease;
+  filter:saturate(1.02) contrast(1.02);
+}
+.carousel .carousel-item.active img{ transform:scale(1.01); }
+
+/* ======= Header ======= */
+.price-tag{
+  display:inline-flex; align-items:center; gap:.5rem;
+  background:var(--chip-bg); border:var(--chip-border);
+  color:#1e40af;                   /* azul oscuro */
+  padding:.42rem .7rem; border-radius:999px;
+  font-weight:700; box-shadow:0 2px 6px rgba(37,99,235,.12);
+}
+.title{
+  color:var(--heading);
+  font-weight:800;
+  font-size:clamp(1.8rem,1.2rem + 1.6vw,2.4rem);
+  letter-spacing:.2px;
+  margin:.35rem 0 .25rem;
+}
+.subtitle{ color:#475569; margin-bottom:1.1rem; }
+
+/* ======= Descripción ======= */
+.description{
+  background:var(--card);
+  border:var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:1.1rem;
+}
+.description h2{
+  margin:0 0 .7rem; font-size:1rem; letter-spacing:.4px;
+  text-transform:uppercase; color:#334155;
+}
+.description .text{ color:#1f2937; line-height:1.7; }
+
+/* ======= Panel de reserva ======= */
+.booking-panel{
+  position:sticky; top:16px;
+  background:var(--card);
+  border:var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:1rem;
+}
+.section-label{
+  color:#334155; text-transform:uppercase;
+  letter-spacing:.5px; font-size:.95rem; margin-bottom:.8rem;
+}
+
+/* Inputs */
+.form-label{ color:#475569; }
+.form-control{
+  background:#ffffff; color:#0b1220;
+  border:1px solid #e5e7eb; border-radius:var(--radius-sm);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.form-control:focus{ border-color:var(--primary); outline:none; box-shadow:var(--ring); }
+
+/* Total */
+.total-row{
+  margin-top:.85rem; display:flex; justify-content:space-between; align-items:center;
+  padding:.75rem .9rem; border-radius:var(--radius-sm);
+  background:#f8fafc; border:1px solid #e2e8f0;
+}
+.total-row .muted{ color:var(--muted); }
+.total-row .total{ font-weight:800; font-size:1.15rem; color:var(--heading); }
+
+/* Botón primario */
+.btn-nord{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:100%;
+  background:linear-gradient(180deg,var(--primary),var(--primary-600));
+  color:#fff; font-weight:800;
+  border:0; border-radius:var(--radius-sm);
+  padding:.9rem 1rem;
+  box-shadow:0 10px 18px rgba(37,99,235,.20);
+  transition:filter .15s ease, transform .05s ease;
+}
+.btn-nord:hover{ filter:brightness(1.04); }
+.btn-nord:active{ transform:translateY(1px); }
+.btn-nord:disabled{ filter:saturate(.6) brightness(.92); }
+
+/* Fine print & alertas */
+.fine-print{ color:var(--muted); font-size:.8rem; margin-top:.6rem; }
+.alert{
+  border-radius:10px;
+  border:1px solid #fde68a;
+  background:#fffbeb;
+  color:#92400e;
+  padding:.5rem .75rem;
+}
+
+/* ======= Responsive ======= */
+@media (max-width: 991.98px){
+  .booking-panel{ top:0; }
+}
+
+
+/* Navbar fijo estilo glass */
+.navbar-glass{
+  background: rgba(255,255,255,.85) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid rgba(15,23,42,.06);
+}
+
+/* Fuerza posición fija aunque otras reglas intenten sobrescribir */
+.force-fixed{
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  z-index: 1100; /* por encima de cards/carruseles */
+}
+
+.navbar-elevated{ box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+.navbar{ transition: box-shadow .2s ease, background-color .2s ease; }
+
+
+

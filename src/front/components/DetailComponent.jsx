@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+
 export const DetailComponent = (props) => {
     const navigate = useNavigate();
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3001";
@@ -90,96 +91,117 @@ useEffect(() => {
 }, [checkIn, checkOut, props.price_per_day]);
 
 
-    return (
+  return (
+  <div className="detail-nord container">
 
-        <div className="container py-2 my-1 px-0 col-11 col-sm-7 col-md-7 col-lg-7">
-
-
-            <div className="justify-content-center mt-3">
-                <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
-                    <div className="carousel-inner" style={{ maxHeight: "100%", overflow: "hidden" }}>
-                        {(props.images && Array.isArray(props.images) && props.images.length > 0
-                            ? props.images.map((img) => typeof img === "string" ? img : img.url)
-                            : ["https://placehold.co/600x400"]
-                        ).map((image, index) => (
-                            <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
-                                <img
-                                    src={image}
-                                    className="d-block w-100"
-                                    alt={`Slide ${index}`}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <button className="carousel-control-prev" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Previous</span>
-                    </button>
-                    <button className="carousel-control-next" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Next</span>
-                    </button>
-                </div>
-                {/* {props.owner_id}
-                {props.space_id}
-                {props.description}
-                {props.title} */}
-
-
+    {/* MEDIA / CARRUSEL */}
+    <div className="media-frame mb-4">
+      <div id={carouselId} className="carousel slide" data-bs-ride="carousel">
+        <div className="carousel-inner">
+          {(props.images && Array.isArray(props.images) && props.images.length > 0
+            ? props.images.map((img) => (typeof img === "string" ? img : img.url))
+            : ["https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1920&auto=format&fit=crop"]
+          ).map((image, index) => (
+            <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+              <img src={image} className="d-block w-100" alt={`Slide ${index}`} />
             </div>
-            <div className="justify-content-start mt-3">
-                <h2>{props.title || "Título por defecto"}</h2>
-                <h4>{props.price_per_day ? props.price_per_day + "€/día" : (Math.random() * 100).toFixed(0) + "€/día"}</h4>
-                <h5>Capacidad: {props.capacity}</h5>
-                <h6>Dirección: {props.address}</h6>
-                <p>{props.description || "Descripción por defecto del espacio."}</p>
-            </div>
-            <div>
-                <h4>Programar reserva</h4>
-                <div className="d-flex justify-content-center gap-2">
-                    <div className="col-6">
-                        <label className="form-label mb-1">Check-in</label>
-                        <input
-                            type="date"
-                            className="form-control form-control-sm"
-                            value={checkIn}
-                            min={todayISO()}
-                            onChange={function (e) {
-                                const v = e.target.value;
-                                setCheckIn(v);
-                                if (v >= checkOut) setCheckOut(addDays(v, 1));
-                            }}
-                        />
-                    </div>
-                    <div className="col-6">
-                        <label className="form-label mb-1">Check-out</label>
-                        <input
-                            type="date"
-                            className="form-control form-control-sm"
-                            value={checkOut}
-                            min={addDays(checkIn, 1)}
-                            onChange={function (e) { setCheckOut(e.target.value); }}
-                        />
-                    </div>
-
-                </div>
-                <div>
-                    <h4>Total: {totalprice}€</h4>
-                </div>
-                <div className="d-flex justify-content-end mt-3">
-                    <button
-                        type="button"
-                        className="btn btn-success btn-sm mt-2"
-                        onClick={handleReserve}
-                        disabled={loading}
-                    >
-                        {loading ? "Reservando..." : "Confirmar reserva"}
-                    </button>
-
-                </div>
-
-            </div>
+          ))}
         </div>
+        <button className="carousel-control-prev" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="prev">
+          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span className="visually-hidden">Anterior</span>
+        </button>
+        <button className="carousel-control-next" type="button" data-bs-target={`#${carouselId}`} data-bs-slide="next">
+          <span className="carousel-control-next-icon" aria-hidden="true"></span>
+          <span className="visually-hidden">Siguiente</span>
+        </button>
+      </div>
+    </div>
 
-    )
+    {/* GRID: contenido + reserva */}
+    <div className="row g-4">
+      {/* COLUMNA CONTENIDO */}
+      <div className="col-lg-7">
+        <header className="header">
+          <div className="badges mb-2">
+            <span className="price-tag">{props.price_per_day || 0}€ / día</span>
+          </div>
+          <h1 className="title">{props.title || "Título por defecto"}</h1>
+          <p className="subtitle">
+            {props.address || "Dirección no disponible"} · Capacidad {props.capacity ?? "-"}
+          </p>
+        </header>
+
+        <section className="description">
+          <h2>Sobre el espacio</h2>
+          <p className="text">
+            {props.description || "Descripción por defecto del espacio."}
+          </p>
+        </section>
+      </div>
+
+      {/* COLUMNA RESERVA */}
+      <div className="col-lg-5">
+        <aside className="booking-panel">
+          <h3 className="section-label">Programar reserva</h3>
+
+          {inlineMsg && (
+            <div className="alert alert-warning py-2 small mb-2" role="alert">{inlineMsg}</div>
+          )}
+
+          <div className="row g-3">
+            <div className="col-12 col-sm-6">
+              <label className="form-label small mb-1">Check-in</label>
+              <input
+                type="date"
+                className="form-control form-control-sm"
+                value={checkIn}
+                min={todayISO()}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setCheckIn(v);
+                  if (v >= checkOut) setCheckOut(addDays(v, 1));
+                }}
+              />
+            </div>
+            <div className="col-12 col-sm-6">
+              <label className="form-label small mb-1">Check-out</label>
+              <input
+                type="date"
+                className="form-control form-control-sm"
+                value={checkOut}
+                min={addDays(checkIn, 1)}
+                onChange={(e) => setCheckOut(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="total-row">
+            <span className="muted">Total</span>
+            <span className="total">{totalprice} €</span>
+          </div>
+
+          <button
+            type="button"
+            className="btn-nord w-100 mt-3"
+            onClick={handleReserve}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" />
+                Reservando…
+              </>
+            ) : (
+              "Confirmar reserva"
+            )}
+          </button>
+
+          <p className="fine-print">* Sujeto a disponibilidad y política de cancelación.</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+);
+
 }

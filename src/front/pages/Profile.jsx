@@ -303,7 +303,7 @@ export const Profile = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-center mb-0">
+                  <p className="mb-0 w-100 text-center">
                     No tienes espacios disponibles.{" "}
                     <Link to="/post-space">¡Crea tu espacio ahora!</Link>
                   </p>
