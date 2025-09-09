@@ -663,7 +663,7 @@ def get_user_favorites():
         favorites = FavoritesSpaces.query.filter_by(user_id=user_id).all()
 
         # Serializar los favoritos
-        favorites_data = [favorite.space.serialize() for favorite in favorites]
+        favorites_data = [{"favorite_id": favorite.id, **favorite.space.serialize()} for favorite in favorites]
 
         return jsonify({
             "msg": "Favoritos obtenidos exitosamente.",
@@ -692,7 +692,7 @@ def delete_user_favorite(favorite_id):
             return jsonify({"msg": "El favorito no existe."}), 404
 
         # Verificar que el favorito pertenece al usuario autenticado
-        if favorite.user_id != current_user_id:
+        if favorite.user_id != int(current_user_id):
             return jsonify({"msg": "No tienes permiso para eliminar este favorito."}), 403
 
         # Eliminar el favorito

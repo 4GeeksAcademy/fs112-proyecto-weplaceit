@@ -9,7 +9,7 @@ import { Card } from "../components/Card";
 import SpaceCard from "../components/SpaceCard";
 
 export const Profile = () => {
-
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [userSpaces, setUserSpaces] = useState(null);

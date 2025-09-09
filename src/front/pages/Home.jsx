@@ -16,6 +16,7 @@ export const Home = () => {
     fetchSpaces();
     if (token) { getFavorites(); }
     window.scrollTo(0, 0);
+    console.log((userFavorites.find(fav => Number(fav.space_id) === Number(space.space_id))?.favorite_id))
   }, []);
 
   async function fetchSpaces() {
@@ -36,7 +37,7 @@ export const Home = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/get-favorites`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/get-favorites`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,9 +54,10 @@ export const Home = () => {
       setUserFavorites(data.favorites);
     }
     catch (error) {
-      console.error("Error fetching profile data:", error);
+      console.log("Error fetching profile data:", error);
     }
   }
+
 
   return (
     <div className="container py-5">
@@ -102,7 +104,12 @@ export const Home = () => {
                 price={space.price_per_day + "€/día"}
                 images={space.images}
                 id={space.space_id}
-                isFavorite={userFavorites ? userFavorites.some(fav => Number(fav.space_id) === Number(space.space_id)) : false}                // redirection={"/single/" + (space.space_id || "")} // opcional si quieres enlazar a detalle
+                isFavorite={userFavorites ? userFavorites.some(fav => Number(fav.space_id) === Number(space.space_id)) : false}
+                favid={
+                  userFavorites
+                    ? (userFavorites.find(fav => Number(fav.space_id) === Number(space.space_id))?.favorite_id || null)
+                    : null
+                }
               >
                 {/* Botón de reservar dentro de la card */}
                 <ReserveButton spaceId={space.space_id} />
