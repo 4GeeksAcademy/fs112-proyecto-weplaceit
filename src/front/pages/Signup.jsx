@@ -34,17 +34,22 @@ export const Signup = () => {
         setLoading(true);
 
         try {
+            const formData = new FormData();
+            formData.append("first_name", firstName);
+            formData.append("last_name", lastName);
+            formData.append("username", username);
+            formData.append("email", email);
+            formData.append("password", password);
+
+            // Obtener el archivo de imagen del input
+            const imageInput = document.getElementById("profileImage");
+            if (imageInput && imageInput.files && imageInput.files[0]) {
+                formData.append("profile_image", imageInput.files[0]);
+            }
+
             const res = await fetch(`${backendUrl}/api/signup`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
-                // credentials: "include", 
-                body: JSON.stringify({
-                            first_name: firstName,
-                            last_name: lastName,
-                            username: username,
-                            email: email,
-                            password: password,
-                        })
+                body: formData,
             });
 
             const data = await res.json();
@@ -168,6 +173,18 @@ export const Signup = () => {
                                 <label className="form-check-label" htmlFor="showPass">
                                     Mostrar contraseña
                                 </label>
+                            </div>
+
+                            {/* Imagen de perfil */}
+                            <div className="mb-3">
+                                <label htmlFor="profileImage" className="form-label">Imagen de perfil</label>
+                                <input
+                                    id="profileImage"
+                                    type="file"
+                                    className="form-control"
+                                    accept="image/*"
+                                    disabled={loading}
+                                />
                             </div>
 
                             <button className="btn btn-primary w-100" type="submit" disabled={loading}>

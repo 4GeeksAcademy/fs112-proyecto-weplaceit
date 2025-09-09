@@ -83,56 +83,61 @@ def handle_hello():
 def signup():
 
     try:
-        # Se reciben los datos
-        data = request.get_json()
-        
-        first_name = data.get("first_name")
-        last_name  = data.get("last_name")
-        username   = data.get("username")
-        email      = data.get("email")
-        password   = data.get("password")
+        # Usar request.form para datos de texto y request.files para archivos
+        first_name = request.form.get("first_name")
+        last_name  = request.form.get("last_name")
+        username   = request.form.get("username")
+        email      = request.form.get("email")
+        password   = request.form.get("password")
 
+        # Validar campos obligatorios
+        required_fields = ["first_name", "last_name", "username", "email", "password"]
+        for field in required_fields:
+            if not locals()[field]:
+                return jsonify({"error": f"El campo '{field}' es obligatorio."}), 400
 
-        # Manejo de falta de datos
-        if not first_name or not last_name or not username or not email or not password:
-            return jsonify({ "error": "Todos los campos son obligatorios." }), 400
-        
-        # LÓGICA SIMILAR PARA VALIDAR CAMPOS
-        # required_fields = ['email', 'username', 'first_name', 'last_name', 'password']
-        # for field in required_fields:
-        #     if not data.get(field):
-        #         return jsonify({'error': f'"{field}" es requerido para el registro'}), 400
-        
         # Revisar si el correo ya existe
         if User.query.filter_by(email=email).first():
             return jsonify({ "error": "Este correo electrónico ya está registrado." }), 400
-        
+
         # Revisar si el usuario ya existe
         if User.query.filter_by(username=username).first():
             return jsonify({'error': 'Este nombre de usuario ya está registrado.'}), 400
 
-
-        # Se encripta la contraseña
+        # Encriptar la contraseña
         hashed_password = generate_password_hash(password)
 
-
-        # Se crea el nuevo usuario en la base de datos
-        new_user = User( email=email,
-                        username=username,
-                        first_name=first_name,
-                        last_name=last_name,
-                        password=hashed_password,
-                        is_active=True)
+        # Crear el nuevo usuario
+        new_user = User(
+            email=email,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            password=hashed_password,
+            is_active=True
+        )
 
         db.session.add(new_user)
-        db.session.commit()
+        db.session.flush()  # Obtener el ID del nuevo usuario
 
+        # Manejar la imagen de perfil si se envía en el formulario
+        if "profile_image" in request.files:
+            image = request.files["profile_image"]
+            if image.filename != "":
+                file_content = image.read()
+                filename = f"{new_user.id}/{secure_filename(image.filename)}"
+                response = supabase.storage.from_("userImages").upload(filename, file_content)
+                if response.path is None:
+                    return jsonify({"msg": "Error al subir la imagen de perfil a Supabase."}), 500
+                public_url = supabase.storage.from_("userImages").get_public_url(filename)
+                new_user.image_url = public_url
+
+        db.session.commit()
 
         return jsonify({
             "msg": "Usuario creado correctamente",
-            "Nuevo usuario": new_user.serialize() 
+            "Nuevo usuario": new_user.serialize()
         }), 201
-    
     
     except Exception as e:
         db.session.rollback()
