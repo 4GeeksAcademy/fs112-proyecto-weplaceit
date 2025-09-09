@@ -38,6 +38,7 @@ class User(db.Model):
     last_name:  Mapped[str]      = mapped_column( String(40),                       nullable=False)
     password:   Mapped[str]      = mapped_column( String(255),                      nullable=False)
     is_active:  Mapped[bool]     = mapped_column( Boolean,     default=True,        nullable=False)
+    image_url:  Mapped[Optional[str]] = mapped_column( String(255),                      nullable=True)
     created_at: Mapped[datetime] = mapped_column( DateTime,    default=func.now(),  nullable=False)
     reset_token:Mapped[str]      = mapped_column(String(128),                       nullable=True)
 
