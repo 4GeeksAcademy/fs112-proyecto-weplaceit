@@ -254,7 +254,7 @@ export const Profile = () => {
         </div>
 
         {/* Espacios reservados (demo) */}
-        <div className="accordion-item rounded-4 shadow-sm overflow-hidden mb-3 border-0">
+{/*         <div className="accordion-item rounded-4 shadow-sm overflow-hidden mb-3 border-0">
           <h2 className="accordion-header">
             <button className="accordion-button py-3 fw-semibold" type="button"
               data-bs-toggle="collapse" data-bs-target="#bookedSpacesCollapse" aria-expanded="true" aria-controls="bookedSpacesCollapse">
@@ -275,7 +275,7 @@ export const Profile = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Mis espacios disponibles */}
         <div className="accordion-item rounded-4 shadow-sm overflow-hidden border-0">
@@ -301,6 +301,7 @@ export const Profile = () => {
                         title={space.title}
                         description={space.description}
                         price={space.price_per_day + "€/día"}
+                        images={space.images}
                       />
                     </div>
                   ))
